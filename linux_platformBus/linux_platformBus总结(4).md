@@ -1,49 +1,61 @@
 
 
-Linux PlatformBus ×Ü½á
+Linux PlatformBus æ€»ç»“
 
 
-1¡¢ÈçºÎÊ¹ÓÃplatform_driver£¿
-ÔÚÄ£¿é³õÊ¼»¯º¯ÊýÖÐÊ¹ÓÃ£ºplatform_driver_register()×¢²áÒ»¸öplatform_driver¡£
-ÖÁÉÙÒªÌî³äËüµÄ³ÉÔ±probe£¬remove£¬driver.name£¬driver.owner£¬driver.of_match_table¡£
-of_match_tableÀïÃæµÄ.compatible ºÍÔÚdtsÖÐ¶¨ÒåµÄÒªÏàÍ¬¡£
+1ã€å¦‚ä½•ä½¿ç”¨platform_driverï¼Ÿ
+
+åœ¨æ¨¡å—åˆå§‹åŒ–å‡½æ•°ä¸­ä½¿ç”¨ï¼šplatform_driver_register()æ³¨å†Œä¸€ä¸ªplatform_driverã€‚
+
+è‡³å°‘è¦å¡«å……å®ƒçš„æˆå‘˜probeï¼Œremoveï¼Œdriver.nameï¼Œdriver.ownerï¼Œdriver.of_match_tableã€‚
+
+of_match_tableé‡Œé¢çš„.compatible å’Œåœ¨dtsä¸­å®šä¹‰çš„è¦ç›¸åŒã€‚
 
 
-2¡¢platform_driver_registerÕâ¸öº¯ÊýÓÐÄÄÐ©¹¦ÄÜ£¿
-£¨1£©Ìî³ädriverµÄ³ÉÔ±£¬Èçbus¡¢probe¡¢remove
-£¨2£©µ÷ÓÃdriver_register()×¢²áÕâ¸ödriver
-£¨3£©×¢²áÒ»¸öplatform_driver£¬Êµ¼ÊÉÏ½ö½ö°ÑËüºÍplatformBusÁªÏµÆðÀ´£¬È»ºóµ÷ÓÃdriver_register()×¢²áÒ»¸ödriver£¬ºËÐÄ»¹ÊÇÔÚdriver_register()¡£
+2ã€platform_driver_registerè¿™ä¸ªå‡½æ•°æœ‰å“ªäº›åŠŸèƒ½ï¼Ÿ
 
+ï¼ˆ1ï¼‰å¡«å……driverçš„æˆå‘˜ï¼Œå¦‚busã€probeã€remove
 
+ï¼ˆ2ï¼‰è°ƒç”¨driver_register()æ³¨å†Œè¿™ä¸ªdriver
 
-3¡¢platformBusÔõÃ´Æ¥Åäplatform_driverºÍplatform_deviceµÄ£¿
-ÔÚdriver_register()ÖÐ£¬»áµ÷ÓÃdrv->bus->match(dev, drv)À´Æ¥ÅädeviceºÍdriver£¬¼´µ÷ÓÃplatform_matchº¯Êý£¬Ò»°ãÓÃµ½Õâ¸öº¯ÊýµÄ2ÖÖÆ¥Åä·½Ê½£º
-£¨1£©»ùÓÚofÆ¥Åä£º±È½ÏdeviceºÍdriverµÄcompatibleÊôÐÔÖµÊÇ·ñÏàÍ¬¡£
-£¨2£©»ùÓÚnameÆ¥Åä£º±È½Ïplatform_device.name ºÍ platform_driver.nameÊÇ·ñÏàÍ¬¡£
-
-
-
-4¡¢platformBusÕâÌõ×ÜÏßÔÚÄÄÀï¶¨ÒåºÍ×¢²áµÄ£¿
-ÔÚÄÚºË³õÊ¼»¯µÄÊ±ºò£¬»áµ÷ÓÃbus_register()×¢²áÒ»ÌõplatformBus¡£bus_register()×îÖØÒªµÄ¹¦ÄÜÊÇ¸øbusµÄË½ÓÐÊý¾Ýstruct subsys_private·ÖÅäÄÚ´æ²¢Ìî³ä¡£
+ï¼ˆ3ï¼‰æ³¨å†Œä¸€ä¸ªplatform_driverï¼Œå®žé™…ä¸Šä»…ä»…æŠŠå®ƒå’ŒplatformBusè”ç³»èµ·æ¥ï¼Œç„¶åŽè°ƒç”¨driver_register()æ³¨å†Œä¸€ä¸ªdriverï¼Œæ ¸å¿ƒè¿˜æ˜¯åœ¨driver_register()ã€‚
 
 
 
-5¡¢ÔÚ»ùÓÚofµÄÆ¥ÅäÊ±£¬ÎÒÃÇÖ»¶¨ÒåÁËÒ»¸öplatform_driver£¬¶øÃ»ÓÐ¶¨Òåplatform_device£¬ÄÇÃ´Õâ¸öplatform_deviceÄÄÀ´µÄ£¿
-ÔÚ»ùÓÚofµÄÆ¥ÅäÖÐ£¬ÊÇÍ¨¹ý driver->of_match_table ºÍ device->of_node À´Æ¥ÅäµÄ¡£
+3ã€platformBusæ€Žä¹ˆåŒ¹é…platform_driverå’Œplatform_deviceçš„ï¼Ÿ
 
-deviceµÄ³ÉÔ±of_nodeµÄÀàÐÍÊÇstruct device_node£¬ËüÔÚÄÚºË³õÊ¼»¯Ê±µÄunflatten_dt_node()ÖÐ·ÖÅäÄÚ´æ²¢ÇÒ½«dtbµÄÐÅÏ¢½âÎö±£´æ¸øËü¡£
+åœ¨driver_register()ä¸­ï¼Œä¼šè°ƒç”¨drv->bus->match(dev, drv)æ¥åŒ¹é…deviceå’Œdriverï¼Œå³è°ƒç”¨platform_matchå‡½æ•°ï¼Œä¸€èˆ¬ç”¨åˆ°è¿™ä¸ªå‡½æ•°çš„2ç§åŒ¹é…æ–¹å¼ï¼š
 
-ÔÚÓÅÏÈ¼¶Îª3µÄÄ£¿é³õÊ¼»¯º¯ÊýÖÐ£¬platform_deviceµÄ×ÊÔ´ºÍÄÚ´æÔÚÕâ¸öº¯ÊýÖÐ±»Í³Ò»·ÖÅä£ºof_platform_populate()¡£
+ï¼ˆ1ï¼‰åŸºäºŽofåŒ¹é…ï¼šæ¯”è¾ƒdeviceå’Œdriverçš„compatibleå±žæ€§å€¼æ˜¯å¦ç›¸åŒã€‚
+
+ï¼ˆ2ï¼‰åŸºäºŽnameåŒ¹é…ï¼šæ¯”è¾ƒplatform_device.name å’Œ platform_driver.nameæ˜¯å¦ç›¸åŒã€‚
 
 
 
-6¡¢platformBus£¬platformDeviceºÍplatformDriverµÄ³õÊ¼»¯
-ÔÚÄÚºË³õÊ¼»¯Ê±£¬platformBusµÄ³õÊ¼»¯ÔÚ×îÇ°Ãæ£ºbus_register(&platform_bus_type)¡£
+4ã€platformBusè¿™æ¡æ€»çº¿åœ¨å“ªé‡Œå®šä¹‰å’Œæ³¨å†Œçš„ï¼Ÿ
 
-È»ºó»á½øÈë do_initcalls()£º
+åœ¨å†…æ ¸åˆå§‹åŒ–çš„æ—¶å€™ï¼Œä¼šè°ƒç”¨bus_register()æ³¨å†Œä¸€æ¡platformBusã€‚bus_register()æœ€é‡è¦çš„åŠŸèƒ½æ˜¯ç»™busçš„ç§æœ‰æ•°æ®struct subsys_privateåˆ†é…å†…å­˜å¹¶å¡«å……ã€‚
 
-£¨1£©Ê×ÏÈÊÇplatformDeviceµÄ³õÊ¼»¯£¨arch_initcall_syncÖÐ£¬ÓÅÏÈ¼¶Îª3s¡£sync±íÊ¾Í¬²½£¬¼´µÈ´ý£¬ÓÅÏÈ¼¶Îª3s£¬±È3µÍ£©£ºarch_initcall_sync(of_platform_default_populate_init)¡£
 
-£¨2£©È»ºóÊÇ¸÷ÖÖplatformDriverµÄ³õÊ¼»¯£¨module_initÖÐ£¬ÓÅÏÈ¼¶Îª6£©¡£
+
+5ã€åœ¨åŸºäºŽofçš„åŒ¹é…æ—¶ï¼Œæˆ‘ä»¬åªå®šä¹‰äº†ä¸€ä¸ªplatform_driverï¼Œè€Œæ²¡æœ‰å®šä¹‰platform_deviceï¼Œé‚£ä¹ˆè¿™ä¸ªplatform_deviceå“ªæ¥çš„ï¼Ÿ
+
+åœ¨åŸºäºŽofçš„åŒ¹é…ä¸­ï¼Œæ˜¯é€šè¿‡ driver->of_match_table å’Œ device->of_node æ¥åŒ¹é…çš„ã€‚
+
+deviceçš„æˆå‘˜of_nodeçš„ç±»åž‹æ˜¯struct device_nodeï¼Œå®ƒåœ¨å†…æ ¸åˆå§‹åŒ–æ—¶çš„unflatten_dt_node()ä¸­åˆ†é…å†…å­˜å¹¶ä¸”å°†dtbçš„ä¿¡æ¯è§£æžä¿å­˜ç»™å®ƒã€‚
+
+åœ¨ä¼˜å…ˆçº§ä¸º3çš„æ¨¡å—åˆå§‹åŒ–å‡½æ•°ä¸­ï¼Œplatform_deviceçš„èµ„æºå’Œå†…å­˜åœ¨è¿™ä¸ªå‡½æ•°ä¸­è¢«ç»Ÿä¸€åˆ†é…ï¼šof_platform_populate()ã€‚
+
+
+
+6ã€platformBusï¼ŒplatformDeviceå’ŒplatformDriverçš„åˆå§‹åŒ–
+
+åœ¨å†…æ ¸åˆå§‹åŒ–æ—¶ï¼ŒplatformBusçš„åˆå§‹åŒ–åœ¨æœ€å‰é¢ï¼šbus_register(&platform_bus_type)ã€‚
+
+ç„¶åŽä¼šè¿›å…¥ do_initcalls()ï¼š
+
+ï¼ˆ1ï¼‰é¦–å…ˆæ˜¯platformDeviceçš„åˆå§‹åŒ–ï¼ˆarch_initcall_syncä¸­ï¼Œä¼˜å…ˆçº§ä¸º3sã€‚syncè¡¨ç¤ºåŒæ­¥ï¼Œå³ç­‰å¾…ï¼Œä¼˜å…ˆçº§ä¸º3sï¼Œæ¯”3ä½Žï¼‰ï¼šarch_initcall_sync(of_platform_default_populate_init)ã€‚
+
+ï¼ˆ2ï¼‰ç„¶åŽæ˜¯å„ç§platformDriverçš„åˆå§‹åŒ–ï¼ˆmodule_initä¸­ï¼Œä¼˜å…ˆçº§ä¸º6ï¼‰ã€‚
 
 
