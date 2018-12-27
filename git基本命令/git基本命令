@@ -1,0 +1,49 @@
+
+
+
+```c
+
+1. 提交代码到 gerrit
+git status/git status .
+git add xxx.c/git add .
+git commit -m "this is a test"
+git push <远程主机名> <本地分支名>:<远程分支名>
+
+(1) 怎么知道本地分支名/远程分支名？
+运行 git branch -a ，会出现：
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/bctc
+  remotes/origin/master
+第一个为本地分支名，后面三个为远程分支名。如果想要提交到远程的 master 分支：
+本地分支名为： master
+远程分支名为： refs/for/master （不需要添加前缀 remotes/origin/ 。加上前缀 refs/for/ ，是因为 gerrit 的规则，避免出现错误： “! [remote rejected] master -> master (prohibited by Gerrit)”）。
+
+(2) 怎么知道远程主机名？
+方法1，通过 git 的 hint ：
+只使用 git push 命令或者 git push <本地分支名>:<远程分支名>，
+出现类似的： ssh://youname@10.30.49.63:95214/22CZ2597OL_YOUKKK_UIK_V009_WIFI_IIG.git ，这个就是远程主机名。
+
+方法2，通过 git 命令：
+git remote show ，显示了： origin
+git remote show origin ，显示了：
+获取地址：ssh://youname@10.30.49.63:95214/22CZ2597OL_YOUKKK_UIK_V009_WIFI_IIG.git
+这个就是远程主机名。
+
+(3) 最终的 git push 命令为：
+git push ssh://youname@10.30.49.63:95214/22CZ2597OL_YOUKKK_UIK_V009_WIFI_IIG.git master:refs/for/master --tags
+ --tags 用于推送本地新增的标签。
+
+
+2. 其他命令：
+git log . ：可以看到 commit-id
+git checkout -f
+git clean -fd
+git reset --hard commit-id
+git pull <远程主机名> <远程分支名>:<本地分支名> （跟 git push 类型）
+
+```
+
+
+
+
