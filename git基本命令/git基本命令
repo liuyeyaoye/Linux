@@ -42,6 +42,27 @@ git clean -fd
 git reset --hard commit-id
 git pull <远程主机名> <远程分支名>:<本地分支名> （跟 git push 类型）
 
+切换分支：
+
+git branch -a
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/master
+  remotes/origin/release/v2.1.x
+  remotes/origin/release/v2.2.x
+  remotes/origin/release/v3.0.0
+
+git checkout -b remotes/origin/release/v2.2.x
+
+git branch -a
+  master
+* remotes/origin/release/v2.2.x
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/master
+  remotes/origin/release/v2.1.x
+  remotes/origin/release/v2.2.x
+  remotes/origin/release/v3.0.0
+
 ```
 
 
