@@ -41,9 +41,10 @@ git checkout -f
 git clean -fd
 git reset --hard commit-id
 git pull <远程主机名> <远程分支名>:<本地分支名> （跟 git push 类型）
+git checkout -- xxx.c
+
 
 切换分支：
-
 git branch -a
 * master
   remotes/origin/HEAD -> origin/master
