@@ -1,0 +1,20 @@
+
+
+
+```c
+1.  位域
+struct card
+{
+	unsigned int suit : 2;
+	unsigned int face_value : 4;
+};
+
+suit 能存储的数为 0——3 ， face_value 能存储的数为 0——15 。
+这2个位域都定义为 unsigned int 。
+如果他们被定义为 signed int ， 那么 suit 的范围为 -2到1， face_value 的范围为 -8到7 。
+如果一个 unsigned int 位域的范围为： 0 到 (2N-1)
+那么对应的 signed int 位域的范围为： -(2N)/2 到 (2N/2)-1
+
+
+```
+
