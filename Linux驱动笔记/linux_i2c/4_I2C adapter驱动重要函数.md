@@ -1,10 +1,12 @@
 
 
+```c
+
 在i2c adapter 驱动程序中，会为每一条i2c总线都注册一个 adapter ： i2c_register_adapter ，i2c adapter中包含了i2c algorithm。
 
 下面分析 i2c_register_adapter：
 
-```c
+
 static int i2c_register_adapter(struct i2c_adapter *adap)
 {
 	int res = 0;

@@ -27,14 +27,14 @@ prefetch的含义是告诉cpu那些元素有可能马上就要用到，告诉cpu预取一下，这样可以提高
 3、 attention：
 1） input_register_handler() 是基于 module_init() ，在 input_register_handler() 函数中，有：
     list_add_tail(&handler->node, &input_handler_list); 
-    list_for_each_entry(dev, &input_dev_list, node)  		
+    list_for_each_entry(dev, &input_dev_list, node)
         input_attach_handler(dev, handler);	
 		
 1.1）这里是 handler 主动与 input_dev 进行连接，由于此时 input_dev_list 上面还没有 input_dev 挂载，所以handler 连接 input_dev 会失败。
 
 2)	input_register_device() 是基于 late_initcall() ，在 input_register_device() 函数中，有：
-    list_add_tail(&dev->node, &input_dev_list);		
-    list_for_each_entry(handler, &input_handler_list, node)				
+    list_add_tail(&dev->node, &input_dev_list);
+    list_for_each_entry(handler, &input_handler_list, node)
         input_attach_handler(dev, handler);
 
 2.1） 这里是 input_dev 主动与 handler 进行连接，由于此时 input_handler_list 上面挂载了一个 handler ，所以在这里， handler 和 input_dev 连接成功，调用 evdev_connect() 函数。
@@ -901,10 +901,10 @@ late_initcall(tpd_device_init);
 int input_register_device(struct input_dev *dev)
 {
 	......
-	list_add_tail(&dev->node, &input_dev_list);		
+	list_add_tail(&dev->node, &input_dev_list);
 	//将这个 input_dev 添加到 input_dev_list 链表
 
-	list_for_each_entry(handler, &input_handler_list, node)				
+	list_for_each_entry(handler, &input_handler_list, node)
 		input_attach_handler(dev, handler);
 	//遍历 input_handler_list 上的每一个 handler ，调用 input_attach_handler().
 	//这里是 input_dev 主动与 handler 进行连接，由于此时 input_handler_list 上面挂载了一个 handler ，所以在这里， handler 和 input_dev 连接成功，调用 evdev_connect() 函数。
@@ -920,10 +920,10 @@ input_handle 是连接 input_dev 和 input_handler 的桥梁。只有当 input_dev 和 input
 int input_register_handle(struct input_handle *handle)
 {
 	......
-	list_add_tail_rcu(&handle->d_node, &dev->h_list);  	
+	list_add_tail_rcu(&handle->d_node, &dev->h_list);
 	//将 input_handle 添加到 input_dev->h_list.
 
-	list_add_tail_rcu(&handle->h_node, &handler->h_list);				
+	list_add_tail_rcu(&handle->h_node, &handler->h_list);
     //将 input_handle 添加到 input_handler->h_list.
 	......	
 }

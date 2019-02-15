@@ -1,5 +1,6 @@
 
 
+```c
 
 一、前言
 
@@ -9,7 +10,7 @@
 
 1、LCD电压IC芯片
 
-```c
+
 module_init(_lcm_i2c_init);
 
 static int __init _lcm_i2c_init(void)
@@ -61,11 +62,11 @@ static int _lcm_i2c_write_bytes(unsigned char addr, unsigned char value)
 
 	return ret;
 }
-```
+
 
 2、TP触摸屏
 
-```c
+
 依然是在初始化probe函数中：
 i2c_add_driver(&tpd_i2c_driver);
 
@@ -187,11 +188,11 @@ int fts_i2c_write(struct i2c_client *client, char *writebuf, int writelen)
     return ret;
 }
 
-```
+
 
 3、AF驱动
 
-```c
+
 首先是模块初始化函数： 
 module_init(MAINAF_i2C_init);
 
@@ -291,11 +292,11 @@ static int i2c_WriteReg(u16 a_u2Data)
 	return 0;
 }
 
-```
+
 
 4、闪光灯IC
 
-```c
+
 module_init(flashlight_lm3643_init);
 
 static int __init flashlight_lm3643_init(void)
@@ -390,11 +391,11 @@ static int lm3643_write_reg(struct i2c_client *client, u8 reg, u8 val)
 	return ret;
 }
 
-```
+
 
 5、Gsensor
 
-```c
+
 i2c_add_driver(&mxc400x_i2c_driver);
 
 static struct i2c_driver mxc400x_i2c_driver = {
@@ -450,11 +451,11 @@ u8 *data, u8 len)
 
 	return err;
 }
-```
+
 
 6、alsps光距离传感器
 
-```c
+
 i2c_add_driver(&ltr559_i2c_driver);
 
 static struct i2c_driver ltr559_i2c_driver = {
@@ -573,11 +574,11 @@ static int ltr559_i2c_write_reg(u8 regnum, u8 value)
 	else
 		return 0;
 }
-```
+
 
 7、 LED I2C设备驱动
 
-```c
+
 在platform bus的probe函数中：
 i2c_add_driver(&led_i2c_driver)
 
@@ -620,11 +621,11 @@ static int led_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
 然后可以使用 i2c smbus 系列读写函数：
 value = i2c_smbus_read_byte_data(g_client, 0x10);//读0x10的值
 i2c_smbus_write_byte_data(client, 0x14, 0xdf);//向0x14写0xdf
-```
+
 
 8、  imgsensor i2c设备驱动
 
-```c
+
 在 imgsensor 的 platform bus 的 probe 函数中，会调用 imgsensor_i2c_create
 
 int imgsensor_i2c_create(void)
@@ -762,11 +763,11 @@ u8 *pwrite_data, u16 write_length, u16 write_per_cycle, u16 id, int speed)
 
 	return ret;
 }
-```
+
 
 9、一个典型的i2c设备读写函数
 
-```c
+
 int iReadReg(u16 a_u2Addr, u8 *a_puBuff, u16 i2cId)
 {
 	int i4RetValue = 0;
@@ -815,11 +816,11 @@ int iReadRegI2C(u8 *a_pSendData , u16 a_sizeSendData, u8 *a_pRecvData, u16 a_siz
 	
 	return 0;
 }
-```
+
 
 10、 i2c使用 dma i2c 传输函数
 
-```c
+
 static struct platform_device camerahw_platform_device = {
 	.name = "image_sensor",
 	.id = 0,

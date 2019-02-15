@@ -1,5 +1,6 @@
 
 
+```c
 
 一、相关的文件
 
@@ -17,7 +18,7 @@
 
 二、i2c-core.c
 
-```c
+
 postcore_initcall(i2c_init);//优先级为2
 static int __init i2c_init(void)
 {
@@ -155,12 +156,12 @@ err_clear_wakeup_irq:
 	return status;
 }
 
-```
+
 
 
 三、i2c-vendor.c
 
-```c
+
 module_init(vendor_i2c_init);
 
 static s32 __init vendor_i2c_init(void)
@@ -353,5 +354,6 @@ addr:0x0000000011000100		size:0x0080		这个地址为i2c0使用的dma地址
 
 	return 0;
 }
+
 ```
 

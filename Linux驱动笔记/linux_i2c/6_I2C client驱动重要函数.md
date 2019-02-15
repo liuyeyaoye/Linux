@@ -1,11 +1,12 @@
 
 
+```c
 
 一、2个重要的读/写函数：
 
 它们都只能传输一个 i2c_msg（数据流为master to slave 或者 slave to master ） ，master和slave可以进行多个字节数据传输。
 
-```c
+
 int i2c_master_send(const struct i2c_client *client, const char *buf, int count)
 {
 	int ret;
@@ -48,11 +49,11 @@ int i2c_master_recv(const struct i2c_client *client, char *buf, int count)
 	 */
 	return (ret == 1) ? count : ret;
 }
-```
+
 
 二、 分析 i2c client driver 的 i2c_add_driver 实现
 
-```c
+
 #define i2c_add_driver(driver) \
 	i2c_register_driver(THIS_MODULE, driver)
 
@@ -127,5 +128,8 @@ static int i2c_do_add_adapter(struct i2c_driver *driver,
 	}
 	return 0;
 }
+
 ```
+
+
 
