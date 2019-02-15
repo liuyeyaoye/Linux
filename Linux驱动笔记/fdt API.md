@@ -33,7 +33,7 @@ static int fb_early_init_dt_get_chosen(unsigned long node, const char *uname, in
 }
 含义：
 depth 深度要为1，表示在根节点下(一般根节点/ 的depth为0)
-检查节点名是否为chosen节点  
+检查节点名是否为chosen节点
 
 
 

@@ -10,7 +10,7 @@ mtk input子系统
 1、 list_for_each_entry(pos, head, member)  ：循环遍历每一个 pos 的子项 member 。原型如下：
 
 #define list_for_each_entry(pos, head, member)              \  
-    for (pos = list_entry((head)->next, typeof(*pos), member);   \  
+    for (pos = list_entry((head)->next, typeof(*pos), member);   \
          prefetch(pos->member.next), &pos->member != (head);  \  
          pos = list_entry(pos->member.next, typeof(*pos), member))  
 
@@ -233,7 +233,7 @@ static struct input_handler evdev_handler = {
 1、 module_init(evdev_init);
 static int __init evdev_init(void)
 {
-	return input_register_handler(&evdev_handler);			
+	return input_register_handler(&evdev_handler);
     //一个 handler 可以处理多个 devices
 }
 
