@@ -1,0 +1,159 @@
+LDD3笔记：
+
+```c
+第1章  设备驱动程序简介
+1. 区分程序设计的机制和策略
+	机制：需要提供什么功能
+	策略：如何使用这些功能
+	驱动程序不带策略，只提供机制
+2. 内核子系统分为：进程管理，内存管理，文件系统，设备控制，网络功能
+3. 内存管理：内核在有限的可用资源之上为每个进程都创建了一个虚拟地址空间
+4. 文件系统：
+	文件系统类型是个软件驱动程序，它将底层数据结构映射到高层数据结构，决定文件名可以有多长以及在目录中存储文件的哪些信息等等。
+	文件系统模块必须实现访问目录和文件的最底层系统调用，方法是将文件名、路径、访问模式等信息映射到数据快的数据结构中。这种接口完全独立于在磁盘上传
+	输的实际数据，而数据的传输由块设备驱动程序负责完成。
+5. 安全问题
+	缓冲区溢出：小心对待未初始化的内存，任何从内核得到的内存，必须在提供给用户进程或者设备之前清零或者以其他方式初始化。
+6. Linux-kernel列表： http://www.tux.org/lkml
+
+
+
+
+
+第2章 构造和运行模块
+1. 内核使用打印输出函数printk，不能使用C库中的printf。
+	在使用printk时，指定打印消息的优先级，例如 KERN_ALERT，因为具有默认优先级的消息可能不会输出在控制台上。
+	printk缺乏对浮点数的支持
+2. 内核模块与应用程序的不同之处：
+	应用程序在退出时，可以不管资源的释放或者其他的清理工作
+	内核模块的退出函数必须仔细的撤销初始化函数所有的一切工作，否则在系统重新引导之前，某些东西会残留在系统中
+	应用程序可以调用它没有定义的函数，因为在连接过程能够解析外部引用从而使用适当的函数库
+	内核模块仅仅链接到内核，因此它能调用的仅仅是由内核导出的那些函数，不存在任何可链接的函数库。任何和内核模块相关的函数声明包含在内核头文件中
+3. 用户空间和内核空间：
+	应用程序运行在用户空间，模块运行在内核空间
+	每当应用程序执行系统调用或者被硬件中断挂起时，将会从用户空间切换到内核空间
+	执行系统调用的代码运行在进程上下文中，它代表调用进程执行操作，因此能够访问进程地址空间的所有数据
+	而处理硬件中断的内核代码和进程是异步的，与任何一个特定的进程无关
+4. 内核的并发
+	Linux通常正在运行多个并发进程，并且可能有多个进程正在使用我们的驱动程序
+	大多数设备能够中断处理器，而中断处理是异步运行，可能在驱动程序处理其他任何时被调用
+	一些软件抽象（如内核定时器）也在异步运行着
+	Linux可以运行在SMP系统上，Linux-2.6以后的内核是可抢占的
+5. 内核具有非常小的栈，如果我们需要大的结构，则应该在调用时动态分配该结构
+6. insmod如何工作的
+	它依赖于定义在kernel/module.c中的一个系统调用，函数sys_init_module给模块分配内核内存以便装载模块，然后该系统调用将模块正文复制到内存区域，并通过内
+	核符号表解析模块中的内核引用，最后调用模块的初始化函数。内核不会修改模块的磁盘文件，只会修改内存中的副本。
+7. modprobe工具与insmod工具的区别：
+	modprobe会考虑要装载的模块是否引用了一些当前内核不存在的符号。如果有，会在当前模块搜索路径中查找定义这些符号的其他模块，将这些模块装载到内核。
+	如果在这种情况下使用insmod，会失败。
+	modprobe除了装入指定模块外还同时装入指定模块所依赖的其他模块。
+8. 内核符号表
+	insmod使用公共内核符号表来解析模块中未定义的符号，公共内核符号表中包含了所有的全局内核项（即函数和变量）的地址。当模块被装入内核后，它所导出的
+	任何符号都会变成内核符号表中的一部分。
+	如果一个模块需要向其他模块导出符号，则应该使用下面的宏：
+	EXPORT_SYMBOL(name);
+	EXPORT_SYMBOL_GPL(name);
+	符号必须在模块文件的全局部分导出，不能在函数中导出。因为这2个宏会被拓展成一个特殊变量的声明，而该变量必须是全局的。该变量将在模块可执行文件的
+	特殊部分（即一个“ELF”段）中保存，在装载时，内核通过这个段来寻找模块导出的变量。
+9. 初始化和关闭
+	模块初始化函数的__init标记，表明该函数仅在初始化期间使用。在模块被装载后，模块装载器会将初始化函数扔掉，释放该函数占用的内存。
+	不要在结束初始化后仍要使用的函数或数据结构使用标记__init和__initdata。
+	__devinit和__devinitdata表示，只有在内核未被配置为支持热拔插的情况下，这2个标记才会被 翻译为__init和__initdata。
+	module_init宏会在模块额目标代码中增加一个特殊的段，用于说明内核初始化函数所在额位置。没有这个定义，初始化函数永远不会被调用。
+10. 清除函数
+	清除函数没有返回值，因此被声明为void
+	__exit修饰词标记该代码仅用于模块卸载（编译器将把该函数放在特殊的ELF段）。
+	如果模块被编译到内核，或者内核的配置不允许卸载模块，则该标记为__exit的函数将被简单的丢弃。
+	被标记为__exit的函数只能在模块被卸载或者系统关闭时被调用
+11. 模块参数
+	module_param(howmany,int ,0664);
+	数组参数：module_param_array(name,type,num,perm);
+	name是数组额名称，type是数组元素的类型，num是一个整型变量，perm是常见的访问许可值
+	如果模块参数的perm被设置为0，就不会有对应的sysfs入口项；否则，模块参数会出现在/sys/module，并设置为给定的访问许可。
+	如果一个模块参数通过sysfs而被修改，则如同模块修改了这个参数的值一样，但是内核不会通知模块
+	
+	
+	
+	
+	
+第3章 字符设备驱动程序
+1. container_of分析
+(1) container_of可以通过结构体变量的某个成员的首地址，来获得整个结构体变量的首地址
+(2) 宏定义
+#define container_of(ptr,type,member)			({		\
+			const typeof(((type *)0)->member) * __mptr = (ptr);			\
+			(type *)((char *)__mptr - offsetof (type,member));			})
+(3) 含义
+ptr：表示结构体变量的成员member的地址
+type：表示结构体的类型
+member：表示结构体中的一个成员
+通过ptr的地址可以返回结构体的首地址
+(4)宏定义分析
+const typeof(((type *)0)->member)*__mptr=(ptr);
+上面的代码，先将0强制转换为结构体指针，然后调用这结构体指针中的成员member，然后使用typeof获取该成员的类型，定义一个该类型的指针__mptr,将ptr赋值给__mptr。
+(type *)((char *)__mptr-offsetof(type,member));
+上面的代码，用结构体成员member的地址(char *)__mptr减去member在结构体中的偏移offsetof，得到的就是结构体的首地址。
+(5)举例
+struct inode{
+	dev_t i_rdev;
+	struct cdev * i_cdev;
+//struct cdev是表示字符设备的内核的内部结构，当inode指向一个字符设备文件时，该字段包含了指向struct cdev结构的指针
+};
+struct light_dev{
+	struct cdev cdev;
+	unsigned char vaule;
+};
+int light_open(struct inode * inode, struct file * filep)
+{
+	struct light_dev * dev;
+	dev = container_of(inode->i_cdev,struct light_dev,cdev);
+//当light_open被调用时，inode指向一个字符设备文件，inode的成员i_cdev此时指向struct light_dev中成员cdev，即i_cdev是cdev的首地址
+	filep->private_data = dev;
+	return 0;
+}
+2. offsetof宏
+(1)宏定义
+#define offsetof(TYPE,MEMBER)	((size_t)&((TYPE*)0)->MEMBER)
+返回成员MEMBER在类型为TYPE的结构体中的偏移值
+(2)分析
+取出TYPE类型结构体的成员member的地址，强制转换成size_t返回
+因为TYPE的首地址为0，所以member的地址，即为member在TYPE结构体中的偏移值。
+(3)size_t sizeof(int)的返回值为int的字节数(4)
+3.字节的对齐
+(1)struct stu{
+	char x;
+	int y;
+	short z;
+};
+sizeof(stu) = 12
+(2) struct stu{
+	char x;
+	short z;
+	int y;
+};
+sizeof(stu) = 8;
+(3)struct stu{
+	char x;
+	int y;
+	short z;
+}__attribute__((aligned(1)));
+sizeof(stu)=7
+
+
+
+
+
+第4章 调试技术
+一. printk
+1. 有8种可用的日志级别字符串(0—7)。未指定优先级的printk语句采用的默认级别是DEFAULT_MESSAGE_LOGLEVEL。在2.6.10内核中，该宏就是KERN_WARING。
+2. 
+根据日志级别，内核可能把消息打印到当前控制台上。当优先级小于console_loglevel这个整数变量的值，消息才能显示出来，而且每次输出一行(如果不易newline字符
+结尾，则不会输出)。
+3. 如果系统同时运行了klogd和syslogd，则无论console_loglevel为何值，内核消息都将追加到/var/log/messages中(否则按照syslogd的配置进行处理)。如果klogd没有运行，这
+些消息不会传到用户空间，只能查看/proc/kmsg文件。
+4. 变量console_loglevel的初始值是DEFAULT_CONSOLE_LOGLEVEL，可以通过sys_syslog系统调用进行修改。
+5. 也可以通过对/proc/sys/kernel/printk的访问来修改控制台的日志级别，例如，可以简单的输入下面的命令使所有的内核消息显示到控制台：
+	echo 8 > /proc/sys/kernel/printk
+```
+
+	

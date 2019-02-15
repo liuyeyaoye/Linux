@@ -1,2 +1,2 @@
 # Linux
-Linux相关的notes，基于MTK的Android平台
+Linux驱动相关的笔记，基于MTK智能机的Android平台。

@@ -10,9 +10,7 @@ linux bus，driver，device总结
 
 bus_register(&platform_bus_type)，这是bus；
 
-然后是解析device_node，
-
-初始化platform_deviceof_platform_default_populate_init()，这是device；
+然后是解析device_node，初始化platform_device：of_platform_default_populate_init()，这是device；
 
 然后就是各种platform_driver的初始化，例如：platform_driver_register(&mt_i2c_driver)，这是driver。
 
