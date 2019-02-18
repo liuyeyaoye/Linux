@@ -25,14 +25,6 @@ vendor/ageing/stress/stress.cpp:54: error: undefined reference to 'ui_flip'
 collect2: error: ld returned 1 exit status
 解决：Android.mk中加上：LOCAL_STATIC_LIBRARIES += libminiui
 
-target Executable: speakertest (out/target/product/top8321_fgemmc/obj/EXECUTABLES/speakertest_intermediates/LINKED/speakertest)
-vendor/ageing/speaker/speaker.cpp:17: error: undefined reference to 'Audio_READ_SPK_OC_STA'
-vendor/ageing/speaker/speaker.cpp:27: error: undefined reference to 'Common_Audio_init'
-vendor/ageing/speaker/speaker.cpp:28: error: undefined reference to 'LouderSPKOCTest'
-vendor/ageing/speaker/speaker.cpp:31: error: undefined reference to 'LouderSPKOCTest'
-vendor/ageing/speaker/speaker.cpp:32: error: undefined reference to 'Common_Audio_deinit'
-collect2: error: ld returned 1 exit status
-
 
 
 target Executable: factory (out/target/product/top8321_fgemmc/obj/EXECUTABLES/factory_intermediates/LINKED/factory)
