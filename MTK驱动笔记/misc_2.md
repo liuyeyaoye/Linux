@@ -69,7 +69,7 @@ mmm vendor/mediatek/proprietary/hardware/mtkcam/legacy/platform/mt6739/v1/common
 adb shell stop media && adb shell start media
 
 touch vendor/mediatek/proprietary/hardware/mtkcam/legacy/v1/common/paramsmgr/feature/custom/custom.cpp 
-mmma vendor/mediatek/proprietary/hardware/mtkcam/legacy/v1/common/paramsmgr/  
+mmma vendor/mediatek/proprietary/hardware/mtkcam/legacy/v1/common/paramsmgr/
 mmma vendor/mediatek/proprietary/hardware/mtkcam/legacy/platform/mt6739/v1/common/paramsmgr 
 
 mmma vendor/mediatek/proprietary/hardware/mtkcam/legacy/platform/mt6735m/v1/common/paramsmgr
@@ -279,18 +279,6 @@ strings cam.so
 40、加打印语句时，这样才能打印出来：
 printk("xxx %s line=%d\n",__FUNCTION__,__LINE__);
 
-41、在点亮camera时，有时候，修改了代码，编译不能生效，可以在代码中加入一些字符串 test 来判断是否编译到了这个文件。
-
-42、在点亮 W5528 项目的 S5K3L8 的 DW9718AF时，出现了i2c传输错误： I2C ACK ERR 。
-原因：是因为使用了 mtk6737 平台的 DW9718AF代码，换成供应商提供的 DW9718AF 代码之后，没有了 I2C ACK ERR。
-在log中可以看到可以move AF，但是没有效果。
-原因：使用胶带粘住了后摄，导致无法移动lens。将胶带去掉后，lens可以移动，可以自动对焦。
-
-43、在点亮 Z705 的 GC5025 和 GC2385 时，发现在 sensorlist.cpp 中添加了这2颗imgsensor，但是在开始时却没有去search 这2颗imgsensor。
-原因：在 mt6735 和  tb8735ba1_bsp 这2个目录都有 sensorlist.cpp 这个文件，以 tb8735ba1_bsp 中的这个文件有效，修改 mt6735 目录下的这个文件不会有效果。
-前摄 GC2385 不能点亮，读出来的ID是 0x5025 ，和后摄一样。
-
-
 45、
 请您帮忙分别dump后摄sensor方向90和270时pass2 data:
 
@@ -306,7 +294,6 @@ adb pull /storage/emulated/0/mtklog ./mklog10/
 47、camera调试：
 ov8856b			后摄
 OV9760    		后摄
-
 ov8856			后摄
 OV9760s 		前摄
 

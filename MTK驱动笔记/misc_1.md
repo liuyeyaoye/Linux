@@ -19,19 +19,6 @@ BOOTLOADER 表示 lk，而不是preloader。
 再复制进去，删除哪个错的文件，最后提交
 git reset DZX_LCM-Y87113-V01_ILI9881C_50_IVO_MIPI_DZTX.config
 
-11. 指针可以初始化为NULL，结构体定义后必须使用memset清零。
-void* handle = NULL;
-disp_lcm_handle hlcm;
-disp_lcm_handle *plcm = &hlcm;
-LCM_PARAMS hlcm_param;
-
-memset((void*)&hlcm, 0, sizeof(disp_lcm_handle));
-memset((void*)&hlcm_param, 0, sizeof(LCM_PARAMS));
-
-又例如：	
-disp_input_config input;
-memset(&input, 0, sizeof(disp_input_config));
-
 13. 在lk的disp_lcm.c中：
 if(lcm_drv->compare_id != NULL)
 这里是表示lcm_drv中是否定义了 compare_id 这个函数。
@@ -66,7 +53,7 @@ mutex_unlock(&g_color_reg_lock);
 
 
 19. 下载对应Android 8.0　release 分支
-repo_google init -u git@10.20.29.59:google/platform/manifest -b android-8.0.0_r17
+repo_google init -u git@1.2.3.4:google/platform/manifest -b android-8.0.0_r17
 repo_google sync  -j4
 repo_google start master --all
 
@@ -648,7 +635,7 @@ Normal capture and ZSD capture
 dump Pass2 input from RRZO (normal capture only)
 adb shell "setprop debug.camnode.dump.31 1"
 dump Pass2 input from IMGO
-adb shell "setprop debug.camnode.dump.32 1"  
+adb shell "setprop debug.camnode.dump.32 1" 
 dump Pass2 WDMA output
 adb shell "setprop debug.camnode.dump.42 1"
 dump Pass2 WROT output
