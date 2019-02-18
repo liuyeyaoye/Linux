@@ -109,7 +109,7 @@ imgsensor_hw_init() 这个函数分别调用 gpio_init()，regulator_init()，mclk_init。
 gpio_init(): 调用 pinctrl_lookup_state() 来获取前摄和后摄的 Reset 和 PWDN 引脚状态。
 gpio_release(): 调用 pinctrl_select_state() 拉低前后摄的 Reset 和 PWDN 引脚。
 gpio_set(): 调用 pinctrl_select_state() 设置前后摄的 Reset 和 PWDN 引脚。
-使用 pinctrl_select_state() 时，需要使用自旋锁 DEFINE_MUTEX(pinctrl_mutex)。
+使用 pinctrl_select_state() 时，需要使用互斥体 DEFINE_MUTEX(pinctrl_mutex)。
 
 4.4) 对于 regulator 部分：
 regulator_init(): 调用 regulator_get()。
@@ -228,8 +228,8 @@ SeninfDrvImp::SeninfDrvImp();
 
 
 4、hal层searchSensor做的工作：
-1) 首先搜索后摄(id=0)，对配置的每个imgsensor逐一 check_imgsensor_id()。
-2) 然后搜索前摄(id=1)，对配置的每个imgsensor逐一 check_imgsensor_id()。
+1) 首先搜索后摄(id=0)，对 ProjectConfig.mk 配置的每个imgsensor逐一 check_imgsensor_id()。
+2) 然后搜索前摄(id=1)，对 ProjectConfig.mk 配置的每个imgsensor逐一 check_imgsensor_id()。
 3) 在操作imgsensor之前，先开启imgsensor的ISP模块、MCLK和clock模块、ldo电压，关闭imgsensor之后也要关闭这些。
 4) 通过ioctl来读取imgsensor的ID：get_imgsensor_id()，通过iic来读ID，如果能够读到ID，将imgsensor的ID和name保存，传给hal层。
 5) 如果imgsensor有otp数据，可以在读到ID之后将imgsensor中的otp数据读出来保存，以后不需要在open camera时再去读otp数据，影响性能。
@@ -239,7 +239,7 @@ SeninfDrvImp::SeninfDrvImp();
 执行平台端otp数据校准，如平台端lsc校准；
 执行tsf参数生效，改善color shading；
 lens参数生效和FlashAWB闪光灯参数生效；
-开启AF线程，需要获取陀螺仪()的数据，控制自动对焦；
+开启AF线程，需要获取陀螺仪(测量手机偏转和倾斜的数据)的数据，控制自动对焦；
 发送一些 stopPreview/cancelPicture/close 的命令给camera；
 
 
@@ -259,7 +259,7 @@ initCamdevice(PID=781)：   power on imgsensor, open  imgsensor.
 
 1) camerahalserver
 打开/关闭ISP模块；
-设置PMU mt6370的模式；
+设置PMU xx6370的模式；
 控制AF下电，关闭AF的regulator；
 控制imgsensor下电，关闭imgsensor相关的regulator，时钟，ISP；
 这个进程主要是打开和关闭BB端的ISP模块，它还负责关闭imgsensor和AF。

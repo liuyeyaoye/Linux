@@ -10,6 +10,8 @@ ESD检测：让LCM亮屏，使用+10V和-10V电压（空气正负10Kv，接触正负6Kv，200次），一直
 当进行ESD检测时，先切换到LCM的page 0，读取寄存器0x0A的值，然后再切换到page 0F。
 进休眠时，也在进行ESD检测，先切换到LCM的page 0，发送命令地址0x28（Display Off）和0x10（Sleep In），进入LCM休眠模式，再切换到page 0F。
 ESD检测结束后，按开机键唤醒LCM，从lcd_init_para开始执行，而不是lcd_exist_sleep。
+在读写LCM的寄存器时，切换到 page 0。
+在其他不需要操作LCM寄存器的时候，切换到 page 0F。
 
 1. 在初始化的最后一行加上page 0F： {0xFF,03,{0x98,0x81,0x0F}}
 含义：LCM默认工作在page 0。在LCM初始化结束后，将LCM切换到page 0F。
@@ -60,11 +62,11 @@ Bit3：HS		Bit2：BTA		[Bit1:Bit0]:  TYPE[1:0]
 Type-0，00：短包，读/写命令。
 指令格式：
 Bit3			bit2			bit1			bit0
-Data1		Data0			Data ID			CONFG
+Data1		Data0		Data ID		CONFG
 
 Type-1，01：长包，Frame buffer write command (from LCD)。
 指令格式：
-Bit3				bit2			bit1		bit0
+Bit3				bit2				bit1			bit0
 Mem start 1(可选)	mem start 0		Data ID		CONFG
 
 Type-2，10：长包，Generic long packet write command (from command queue)

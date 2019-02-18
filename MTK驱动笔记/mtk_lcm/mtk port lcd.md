@@ -45,7 +45,7 @@ c、AALServer(MTK特有的一种技术)包括三个子feature：
 
 二、移植驱动
 1、	直接使用通用屏驱动，添加hwinfo；
-		或者使用屏驱动文件，修改list、Makefile等文件，添加屏驱动。
+	或者使用屏驱动文件，修改list、Makefile等文件，添加屏驱动。
 		
 2、查看初始化代码中的读LCD ID的地址，从串口log中看到读到的LCD ID ，填入初始化代码。
 
