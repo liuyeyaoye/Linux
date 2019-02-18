@@ -17,7 +17,7 @@ bt_status_t (*connect)(const bt_bdaddr_t *bd_addr, btsock_type_t type, const uin
 （1）先看listen接口：
 这个接口用于通过socket接收数据。
 listen会创建并监听一个socket，fd保存在指针sock_fd中。
-如果有远程设备连接到了这个socket，read sock_fd时会读到远程设备的蓝牙地址。recvmsg sock_fd并且解析CMSG后会读到一个新的sockFd，此时read sockFd时会读到远程设备发来的数据。
+如果有远程设备连接到了这个socket，read sock_fd时会读到远程设备的蓝牙地址。recvmsg sock_fd然后解析CMSG后会读到一个新的sockFd，此时read sockFd时会读到远程设备发来的数据。
 
 （2）再看connect接口：
 这个接口用于通过socket发送数据。
@@ -141,7 +141,8 @@ int recvmsg(int s, struct msghdr *msg, unsigned int flags);
 （4）CMSG附属数据
 访问辅助数据： CMSG_ALIGN, CMSG_SPACE, CMSG_NXTHDR, CMSG_FIRSTHDR
 
-附属数据并不是套接字负载的一部分。这些控制消息可能包含接收数据包的接口、很少使用的各种报头字段、额外的错误描述、一组文件描述符和Unix凭据。举例来说，控制消息可以用于发送额外的报头字段，诸如IP选项。辅助数据通过调用sendmsg发送，通过调用recvmsg接收。
+附属数据并不是套接字负载的一部分。这些控制消息可能包含接收数据包的接口、很少使用的各种报头字段、额外的错误描述、一组文件描述符和Unix凭据。
+举例来说，控制消息可以用于发送额外的报头字段，诸如IP选项。辅助数据通过调用sendmsg发送，通过调用recvmsg接收。
 
 CMSG操作：
 
@@ -185,12 +186,12 @@ int write_native(int fd, const void *buf, int nbyte)
     char msgbuf[CMSG_SPACE(countFds)];
 
     msg.msg_control = msgbuf;//通过附属数据发送文件符
-    msg.msg_controllen = sizeof msgbuf;
+    msg.msg_controllen = sizeof(msgbuf);
     cmsg = CMSG_FIRSTHDR(&msg);
     cmsg->cmsg_level = SOL_SOCKET;
     cmsg->cmsg_type = SCM_RIGHTS;
-    cmsg->cmsg_len = CMSG_LEN(sizeof fds);
-    memcpy(CMSG_DATA(cmsg), fds, sizeof fds);
+    cmsg->cmsg_len = CMSG_LEN(sizeof(fds));
+    memcpy(CMSG_DATA(cmsg), fds, sizeof(fds));
 
     //仅仅只在第一次write的时候发送附属数据文件符
     while (nbyte> 0){
@@ -208,7 +209,7 @@ int write_native(int fd, const void *buf, int nbyte)
         buffer += ret;
         nbyte -= ret;
 
-        //清空了msg_control，所以msg_control 只发送一次
+        //清空了msg，所以附属数据 msg.msg_control 只发送一次
         memset(&msg, 0, sizeof(msg));
     }
     return 0;
@@ -284,7 +285,7 @@ static int socket_process_cmsg(struct msghdr * pMsg)
                 return -1;
             }
 			
-			int *fd = (int *)malloc(sizeof(int)*count);
+	    int *fd = (int *)malloc(sizeof(int)*count);
             if (fd == NULL) {
                 return -1;
             }

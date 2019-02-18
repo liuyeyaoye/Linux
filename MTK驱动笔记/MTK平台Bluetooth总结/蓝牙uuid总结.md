@@ -2,7 +2,8 @@
 
 ```c
 1. 蓝牙uuid
-在蓝牙协议中，UUID被用来标识蓝牙设备所提供的服务，并非是标识蓝牙设备本身哦，一个蓝牙设备可以提供多种服务，比如A2DP（蓝牙音频传输）、HEADFREE（免提）、PBAP(电话本)、SPP(串口通信)等等，每种服务都对应一个UUID
+在蓝牙协议中，UUID被用来标识蓝牙设备所提供的服务，并非是标识蓝牙设备本身。
+一个蓝牙设备可以提供多种服务，比如A2DP（蓝牙音频传输）、HEADFREE（免提）、PBAP(电话本)、SPP(串口通信)等等，每种服务都对应一个UUID
 
 2、所有的uuid
 https://www.bluetooth.com/specifications/assigned-numbers/service-discovery
