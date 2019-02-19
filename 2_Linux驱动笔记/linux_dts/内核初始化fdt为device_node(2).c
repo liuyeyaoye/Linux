@@ -54,7 +54,7 @@ asmlinkage __visible void __init start_kernel(void)
 	char *command_line;
 	setup_arch(&command_line);
 	init_IRQ();
-}				
+}
 ```
 
 3、 setup_arch 函数
@@ -63,9 +63,9 @@ asmlinkage __visible void __init start_kernel(void)
 char __initdata boot_command_line[COMMAND_LINE_SIZE];
 
 phys_addr_t __fdt_pointer __initdata;
-//__fdt_pointer 在 head.s 中定义： 
-//str_l	x21, __fdt_pointer, x5	
-//Save FDT pointer
+	//__fdt_pointer 在 head.s 中定义： 
+	//str_l	x21, __fdt_pointer, x5	
+	//Save FDT pointer
 
 void __init setup_arch(char **cmdline_p)
 {

@@ -11,7 +11,7 @@ regulator 总结
 
 4、If the regulator is shared between several devices then the lowest request voltage that meets the system constraints will be used.
 
-（1）不同电压的引脚共用 regulator 时， regulator 为了保护低电压引脚不被被烧坏，
+（1）不同电压的引脚共用 regulator 时， regulator 为了保护低电压引脚不被烧坏，
 
 会把低电压引脚的电压设置成 regulator 的最高电压，从而使高电压引脚无法上电。代码中实现的地方为 regulator_check_consumers() ：
 
@@ -41,10 +41,10 @@ if (*min_uV < regulator->min_uV)
 ```c
 const static int VCAMD_voltages[] = {
 	1000000,
-    1200000,
-    1300000,    
-    1500000,
-    1800000,        
+    	1200000,
+    	1300000,
+    	1500000,
+    	1800000,
 };
 ```
 

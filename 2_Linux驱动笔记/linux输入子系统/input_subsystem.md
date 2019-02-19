@@ -168,7 +168,7 @@ input driver层：
 1) mtk tp driver 
 2) 3rd tp driver
 --------------------------------------------------------------------------------------------------------------------------
-硬件层：		
+硬件层：
 cap touch panel
 --------------------------------------------------------------------------------------------------------------------------
 
@@ -340,8 +340,8 @@ int input_register_handle(struct input_handle *handle)
 	 * we can't be racing with input_unregister_handle()
 	 * and so separate lock is not needed here.
 	 */
-	list_add_tail_rcu(&handle->h_node, &handler->h_list);				
-    //将 handle 添加到 input_handler 的链表。
+	list_add_tail_rcu(&handle->h_node, &handler->h_list);
+    	//将 handle 添加到 input_handler 的链表。
 
 	if (handler->start)	//handler->start = NULL 
 		handler->start(handle);
@@ -436,11 +436,11 @@ int input_register_handler(struct input_handler *handler)
 
 	list_add_tail(&handler->node, &input_handler_list);  //将 handler->node 插入到 input_handler_list 的尾部。
 
-//list_for_each_entry(pos, head, member)  ：循环遍历每一个 pos 的子项 member 。	
+	//list_for_each_entry(pos, head, member)  ：循环遍历每一个 pos 的子项 member 。	
 	list_for_each_entry(dev, &input_dev_list, node)  		//循环遍历 input_dev_list 上的每一个 dev ， node 为 dev 的一个成员。
 		input_attach_handler(dev, handler);							
-//这里是 handler 主动与 input_dev_list 上的所有 input_dev 进行遍历连接，然后调用 handler->connect ，即 evdev_connect() 函数。
-//但是此时 input_dev_list 上面还没有 input_dev 挂载，所以这段代码没有意义。
+		//这里是 handler 主动与 input_dev_list 上的所有 input_dev 进行遍历连接，然后调用 handler->connect ，即 evdev_connect() 函数。
+		//但是此时 input_dev_list 上面还没有 input_dev 挂载，所以这段代码没有意义。
 
 	input_wakeup_procfs_readers();
 
@@ -461,8 +461,8 @@ static int input_attach_handler(struct input_dev *dev, struct input_handler *han
 	int error;
 
 	id = input_match_device(handler, dev);
-	if (!id)
-		return -ENODEV;  //直接退出。
+	if (!id)//对于handler，id=NULL。对于devices，id不为NULL。
+		return -ENODEV;  
 
 	error = handler->connect(handler, dev, id);		//调用 evdev_connect() 函数
 	if (error && error != -ENODEV)
@@ -472,11 +472,11 @@ static int input_attach_handler(struct input_dev *dev, struct input_handler *han
 }
 
 
-static const struct input_device_id *input_match_device(struct input_handler *handler,	struct input_dev *dev)
+static const struct input_device_id *input_match_device(struct input_handler *handler, struct input_dev *dev)
 {
 	const struct input_device_id *id;
 
-	for (id = handler->id_table; id->flags || id->driver_info; id++) {			//id->driver_info=1
+	for (id = handler->id_table; id->flags || id->driver_info; id++) {			//id->driver_info=1 ,id 不为NULL。
 
 		if (id->flags & INPUT_DEVICE_ID_MATCH_BUS)
 			if (id->bustype != dev->id.bustype)
@@ -643,9 +643,9 @@ int input_register_device(struct input_dev *dev)
 
 	list_add_tail(&dev->node, &input_dev_list);		//将这个 input_dev 添加到 input_dev_list 链表
 
-	list_for_each_entry(handler, &input_handler_list, node)				
+	list_for_each_entry(handler, &input_handler_list, node)
 		input_attach_handler(dev, handler);
-//循环遍历 input_handler_list  上的每一个 handler ，调用 input_attach_handler()  与 input_dev  attach ，此时 input_handler_list 不为空。
+		//循环遍历 input_handler_list  上的每一个 handler ，调用 input_attach_handler()  与 input_dev  attach ，此时 input_handler_list 不为空。
 
 	input_wakeup_procfs_readers();
 
@@ -677,7 +677,6 @@ void input_event(struct input_dev *dev, unsigned int type, unsigned int code, in
 	unsigned long flags;
 
 	if (is_event_supported(type, dev->evbit, EV_MAX)) {
-
 		spin_lock_irqsave(&dev->event_lock, flags);
 		input_handle_event(dev, type, code, value);
 		spin_unlock_irqrestore(&dev->event_lock, flags);
@@ -724,7 +723,8 @@ static void input_handle_event(struct input_dev *dev,   unsigned int type, unsig
 
 }
 
-
+input_event()最终会调用 evdev_handler->event()，最终会调用 kill_fasync(&client->fasync, SIGIO, POLL_IN);
+//发送信号SIGIO信号给fasync_struct 结构体所描述的PID，触发应用程序的SIGIO信号处理函数
 
 
 
@@ -829,7 +829,7 @@ static int fts_input_report_b(struct fts_ts_data *data)
                       events[i].y, events[i].p, events[i].area);
         } 
 		
-		else {
+	else {
             uppoint++;
             input_mt_report_slot_state(tpd->dev, MT_TOOL_FINGER, false);
             data->touchs &= ~BIT(events[i].id);
@@ -881,11 +881,11 @@ module_init(evdev_init);
 int input_register_handler(struct input_handler *handler)
 {
 	......
-	list_add_tail(&handler->node, &input_handler_list);  
+	list_add_tail(&handler->node, &input_handler_list);
 	//将 handler->node 插入到 input_handler_list 的尾部。
 
 	//遍历 input_dev_list 上的每一个 dev ， node 为 dev 的一个成员。
-	list_for_each_entry(dev, &input_dev_list, node)  		
+	list_for_each_entry(dev, &input_dev_list, node)
 		input_attach_handler(dev, handler);							
 	//这里是 handler 主动与 input_dev_list 上的所有 input_dev 进行遍历连接，然后调用 handler->connect ，即 evdev_connect() 函数。
 	//但是此时 input_dev_list 上面还没有 input_dev 挂载，所以这段代码没有效果。
@@ -924,7 +924,7 @@ int input_register_handle(struct input_handle *handle)
 	//将 input_handle 添加到 input_dev->h_list.
 
 	list_add_tail_rcu(&handle->h_node, &handler->h_list);
-    //将 input_handle 添加到 input_handler->h_list.
+    	//将 input_handle 添加到 input_handler->h_list.
 	......	
 }
 

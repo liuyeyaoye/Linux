@@ -73,7 +73,10 @@ out:
 
 （2）bus_register会分配和初始化该bus的私有数据结构体，然后是一些kset、klist的初始化。
 
+
+
 二、device_register
+
 ```c
 int device_register(struct device *dev)
 {

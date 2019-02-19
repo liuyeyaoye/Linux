@@ -20,7 +20,7 @@ int __init platform_bus_init(void)
     int error;
     early_platform_cleanup();
     error = device_register(&platform_bus);
-//这个device是所有platformDevice的parent
+//platform_bus这个device是所有platformDevice的parent
     if (error)
         return error;
     error =  bus_register(&platform_bus_type);//注册一条platformBus
@@ -103,18 +103,23 @@ static int platform_match(struct device *dev, struct device_driver *drv)
 {
     struct platform_device *pdev = to_platform_device(dev);
     struct platform_driver *pdrv = to_platform_driver(drv);
+
 /* When driver_override is set, only bind to the matching driver */
     if (pdev->driver_override)
         return !strcmp(pdev->driver_override, drv->name);
+
 /* Attempt an OF style match first */
     if (of_driver_match_device(dev, drv))
         return 1;
+
 /* Then try ACPI style match */
     if (acpi_driver_match_device(dev, drv))
         return 1;
+
 /* Then try to match against the id table */
     if (pdrv->id_table)
         return platform_match_id(pdrv->id_table, pdev) != NULL;
+
 /* fall-back to driver name match */
     return (strcmp(pdev->name, drv->name) == 0);
 }

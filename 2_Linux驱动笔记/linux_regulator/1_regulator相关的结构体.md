@@ -47,21 +47,21 @@ struct regulation_constraints {
 
 /*
 该regulator支持的操作模式：
-#define REGULATOR_MODE_FAST 	0x1  //快速改变模式
-#define REGULATOR_MODE_NORMAL   0x2  //正常模式，大多数驱动都使用这种模式
-#define REGULATOR_MODE_IDLE     0x4  //设备在idle状态，regulator给设备提供服务
-#define REGULATOR_MODE_STANDBY  0x8  //设备在standby状态，regulator给设备提供服务
+#define REGULATOR_MODE_FAST 		0x1  //快速改变模式
+#define REGULATOR_MODE_NORMAL   	0x2  //正常模式，大多数驱动都使用这种模式
+#define REGULATOR_MODE_IDLE     		0x4  //设备在idle状态，regulator给设备提供服务
+#define REGULATOR_MODE_STANDBY  	0x8  //设备在standby状态，regulator给设备提供服务
 */
 	unsigned int valid_modes_mask;
 
 /*
 该regulator支持的操作：
-#define REGULATOR_CHANGE_VOLTAGE 0x1   //该regulator可以改变电压
-#define REGULATOR_CHANGE_CURRENT 0x2   //该regulator可以改变电流
-#define REGULATOR_CHANGE_MODE 	 0x4   //该regulator可以改变mode
-#define REGULATOR_CHANGE_STATUS  0x8   //该regulator可以改变状态，也就是enable/disable power
-#define REGULATOR_CHANGE_DRMS    0x10  //该regulator可以动态该变mode
-#define REGULATOR_CHANGE_BYPASS  0x20  //该regulator支持bypass mode
+#define REGULATOR_CHANGE_VOLTAGE 	0x1   //该regulator可以改变电压
+#define REGULATOR_CHANGE_CURRENT 	0x2   //该regulator可以改变电流
+#define REGULATOR_CHANGE_MODE 	0x4   //该regulator可以改变mode
+#define REGULATOR_CHANGE_STATUS  	0x8   //该regulator可以改变状态，也就是enable/disable power
+#define REGULATOR_CHANGE_DRMS    	0x10  //该regulator可以动态该变mode
+#define REGULATOR_CHANGE_BYPASS  	0x20  //该regulator支持bypass mode
 */
 	unsigned int valid_ops_mask;
 

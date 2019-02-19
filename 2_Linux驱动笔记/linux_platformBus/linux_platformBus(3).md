@@ -2,7 +2,7 @@
 
 platformDevice的来龙去脉
 
-在基于of的platformBus中，platform_driver是我们静态定义的，那么platfo_device是哪来的？
+在基于of的platformBus中，platform_driver是我们静态定义的，那么platform_device是哪来的？
 
 这个问题来源于在platform_driver的probe函数被调用时：drv->probe(dev)，dev是哪来的？
 
@@ -11,6 +11,7 @@ platformDevice的来龙去脉
 一、代码路径为 kernel-4.9/drivers/of/Platform.c
 ```c
 arch_initcall_sync(of_platform_default_populate_init);//优先级为3s
+
 static int __init of_platform_default_populate_init(void)
 {
     struct device_node *node;
@@ -27,9 +28,7 @@ static int __init of_platform_default_populate_init(void)
 }
 ```
 ```c
-int of_platform_default_populate(struct device_node *root,
-const struct of_dev_auxdata *lookup,
-struct device *parent)
+int of_platform_default_populate(struct device_node *root,  const struct of_dev_auxdata *lookup,  struct device *parent)
 {
     return of_platform_populate(root, of_default_bus_match_table, lookup,parent);
 }

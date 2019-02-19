@@ -43,7 +43,7 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
 	adap->dev.type = &i2c_adapter_type;
 	
 	res = device_register(&adap->dev);
-    //注册i2c总线adapter里面的device，将它与i2c_bus_type这条总线联系起来
+    	//注册i2c总线adapter里面的device，将它与i2c_bus_type这条总线联系起来
 	if (res)
 		goto out_list;
 
@@ -83,7 +83,7 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
 
 exit_recovery:
 	/* create pre-declared device nodes */
-	of_i2c_register_devices(adap);//重要：i2c client device 初始化
+	of_i2c_register_devices(adap);//i2c client device 初始化
 	acpi_i2c_register_devices(adap);
 	acpi_i2c_install_space_handler(adap);
 
@@ -92,9 +92,10 @@ exit_recovery:
 
 	mutex_lock(&core_lock);
 	bus_for_each_drv(&i2c_bus_type, NULL, adap, __process_new_adapter);
-//遍历总线上的i2c驱动，用于动态的检测i2c client device。
-//它会调用 i2c client driver的detect函数，如果能检测到，就调用i2c_new_device 。
-//该方法主要用于 i2c client driver先于 i2c adapter driver注册。
+	//遍历总线上的i2c驱动，用于动态的检测i2c client device。
+	//它会调用 i2c client driver的detect函数，如果能检测到，就调用i2c_new_device 。
+	//该方法主要用于 i2c client driver先于 i2c adapter driver注册。
+
 	mutex_unlock(&core_lock);
 	return 0;
 
@@ -143,7 +144,7 @@ static void of_i2c_register_devices(struct i2c_adapter *adap)
 	if (!bus)
 		bus = of_node_get(adap->dev.of_node);//它为 i2c adapter 节点
 
-    //循环遍历该i2c adapter节点的每一个i2c client 节点。
+    	//循环遍历该i2c adapter节点的每一个i2c client 节点。
 	for_each_available_child_of_node(bus, node) {
 		if (of_node_test_and_set_flag(node, OF_POPULATED))
 			continue;

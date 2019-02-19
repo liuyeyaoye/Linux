@@ -10,8 +10,6 @@
 
 
 一， kernel 中 的fdt API：
-
-
 1， of_get_flat_dt_prop ：从 node 节点中查找 name 的字符串，返回它的首地址。
 原型： 
 const void *__init of_get_flat_dt_prop(unsigned long node, const char *name,int *size)

@@ -2,24 +2,22 @@
 
 ```c
 
-Ò»¡¢Ïà¹ØµÄÎÄ¼ş
+ä¸€. ç›¸å…³çš„æ–‡ä»¶
 
-1¡¢ i2c-core.c
+1. i2c-core.c
 
-£¨1£©Õâ¸öÎÄ¼şÀïÃæÓĞÒ»¸ö postcore_initcall µ÷ÓÃ£¬ËüµÄº¯ÊıµÄÖ÷Òª×÷ÓÃÊÇµ÷ÓÃ bus_register() ×¢²áÒ»Ìõ i2c bus ¡£
+(1) è¿™ä¸ªæ–‡ä»¶é‡Œé¢æœ‰ä¸€ä¸ª postcore_initcall è°ƒç”¨ï¼Œå®ƒçš„å‡½æ•°çš„ä¸»è¦ä½œç”¨æ˜¯è°ƒç”¨ bus_register() æ³¨å†Œä¸€æ¡ i2c bus ã€‚
 
-£¨2£©Õâ¸öÎÄ¼şÌá¹©ÁË¸÷ÖÖi2c²Ù×÷º¯Êı£¬Èçi2c¶ÁĞ´º¯Êı£¬smbus i2cÏµÁĞº¯Êı£¬i2c ofÏµÁĞº¯Êı£¬i2c adapterÏµÁĞº¯Êı¡£
-
-
-2¡¢ i2c-vendor.c
-
-Õâ¸öÎÄ¼şÊÇi2c adapterµÄ×¢²áºÍÊµÏÖ£¬¸úvendorÏà¹Ø¡£
+(2) è¿™ä¸ªæ–‡ä»¶æä¾›äº†å„ç§i2cæ“ä½œå‡½æ•°ï¼Œå¦‚i2cè¯»å†™å‡½æ•°ï¼Œsmbus i2c ç³»åˆ—å‡½æ•°ï¼Œi2c ofç³»åˆ—å‡½æ•°ï¼Œi2c adapterç³»åˆ—å‡½æ•°ã€‚
 
 
-¶ş¡¢i2c-core.c
+2. i2c-vendor.c
 
+è¿™ä¸ªæ–‡ä»¶æ˜¯ i2c adapter çš„æ³¨å†Œå’Œå®ç°ï¼Œè·Ÿ vendor ç›¸å…³ã€‚
 
-postcore_initcall(i2c_init);//ÓÅÏÈ¼¶Îª2
+äºŒ. i2c-core.c
+
+postcore_initcall(i2c_init);//ä¼˜å…ˆçº§ä¸º2
 static int __init i2c_init(void)
 {
 	int retval;
@@ -30,12 +28,12 @@ static int __init i2c_init(void)
 		__i2c_first_dynamic_bus_num = retval + 1;
 	up_write(&__i2c_board_lock);
 
-	retval = bus_register(&i2c_bus_type);//×¢²áÒ»Ìõi2c bus
+	retval = bus_register(&i2c_bus_type);//æ³¨å†Œä¸€æ¡ i2c bus
 	if (retval)
 		return retval;
 		
 	retval = i2c_add_driver(&dummy_driver);
-    //Ìí¼ÓÒ»¸ö dummy i2c client driver
+    //æ·»åŠ ä¸€ä¸ª dummy i2c client driver
 	if (retval)
 		goto class_err;
 
@@ -158,9 +156,7 @@ err_clear_wakeup_irq:
 
 
 
-
-Èı¡¢i2c-vendor.c
-
+ä¸‰. i2c-vendor.c
 
 module_init(vendor_i2c_init);
 
@@ -189,7 +185,7 @@ static const struct of_device_id vendor_i2c_of_match[] = {
 	{},
 };
 
-//ÓĞ¼¸Ìõi2c×ÜÏß£¬ÏÂÃæÕâ¸öprobeº¯Êı¾Í»áµ÷ÓÃ¼¸´Î¡£Ò»¸öprobe driver¶ÔÓ¦ÁË4¸öi2c×ÜÏßdevice
+//æœ‰å‡ æ¡i2cæ€»çº¿ï¼Œä¸‹é¢è¿™ä¸ªprobeå‡½æ•°å°±ä¼šè°ƒç”¨å‡ æ¬¡ã€‚ä¸€ä¸ªprobe driverå¯¹åº”äº†4ä¸ªi2cæ€»çº¿deviceã€‚
 static int vendor_i2c_probe(struct platform_device *pdev)
 {
 	int ret = 0;
@@ -203,27 +199,27 @@ static int vendor_i2c_probe(struct platform_device *pdev)
 		return -ENOMEM;
 
 	ret = vendor_i2c_parse_dt(pdev->dev.of_node, i2c);
-    //´ÓDTSÖĞ¶ÁÈ¡i2c×ÜÏßµÄDTSĞÅÏ¢£¬±£´æ
+    //ä»DTSä¸­è¯»å–I2Cæ€»çº¿çš„DTSä¿¡æ¯ï¼Œä¿å­˜ã€‚
 	if (ret)
 		return -EINVAL;
 
 /*
-DTSÖĞµÄi2c0µÄµØÖ·Îª£º
+DTSä¸­çš„I2Cçš„åœ°å€ä¸ºï¼š
 reg = <0x0 0x11007000 0x0 0x1000 0x0 0x11000100 0x0 0x80>;
-ÓĞ2¸öµØÖ·£º
-addr:0x0000000011007000   	size:0x00001000	Õâ¸öµØÖ·Îªi2c0µÄ×ÜÏßµØÖ·
-addr:0x0000000011000100		size:0x0080		Õâ¸öµØÖ·Îªi2c0Ê¹ÓÃµÄdmaµØÖ·
-*/		
-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);//i2c×ÜÏßµØÖ·
-	i2c->base = devm_ioremap_resource(&pdev->dev, res);//ioremap i2c×ÜÏßµØÖ·
+æœ‰2ä¸ªåœ°å€ï¼š
+addr:0x0000000011007000   	size:0x00001000	è¿™ä¸ªåœ°å€ä¸ºI2C0çš„æ€»çº¿åœ°å€
+addr:0x0000000011000100		size:0x0080		è¿™ä¸ªåœ°å€ä¸ºI2C0ä½¿ç”¨çš„DMAåœ°å€
+*/
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);//i2cæ€»çº¿åœ°å€
+	i2c->base = devm_ioremap_resource(&pdev->dev, res);//ioremap i2cæ€»çº¿åœ°å€
 	if (IS_ERR(i2c->base))
 		return PTR_ERR(i2c->base);
 
 	if (i2c->id < I2C_MAX_CHANNEL)
 		g_vendor_i2c[i2c->id] = i2c;
 
-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);//dma µØÖ·
-	i2c->pdmabase = devm_ioremap_resource(&pdev->dev, res);//ioremap dma µØÖ·
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);//dma åœ°å€
+	i2c->pdmabase = devm_ioremap_resource(&pdev->dev, res);//ioremap dmaåœ°å€
 	if (IS_ERR(i2c->pdmabase))
 		return PTR_ERR(i2c->pdmabase);
 
@@ -249,7 +245,7 @@ addr:0x0000000011000100		size:0x0080		Õâ¸öµØÖ·Îªi2c0Ê¹ÓÃµÄdmaµØÖ·
 	i2c->dev = &i2c->adap.dev;
 	i2c->adap.dev.parent = &pdev->dev;
 	i2c->adap.owner = THIS_MODULE;
-	i2c->adap.algo = &vendor_i2c_algorithm;//i2c algorithm ÓÉ vendor×ÔĞĞÊµÏÖ
+	i2c->adap.algo = &vendor_i2c_algorithm;//i2c algorithm ç”± vendor å®ç°ã€‚
 	i2c->adap.algo_data = NULL;
 	i2c->adap.timeout = 2 * HZ;
 	i2c->adap.retries = 1;
@@ -316,10 +312,10 @@ addr:0x0000000011000100		size:0x0080		Õâ¸öµØÖ·Îªi2c0Ê¹ÓÃµÄdmaµØÖ·
 		return ret;
 	}
 	
-	vendor_i2c_init_hw(i2c);//Ğ´vendor¼Ä´æÆ÷³õÊ¼»¯i2c
+	vendor_i2c_init_hw(i2c);//å†™vendorå¯„å­˜å™¨åˆå§‹åŒ–I2Cã€‚
 	vendor_i2c_clock_disable(i2c);
 	
-	if (i2c->ch_offset_default)//Îªi2c·ÖÅädma
+	if (i2c->ch_offset_default)//ä¸ºI2Cåˆ†é…DMA
 		i2c->dma_buf.vaddr = dma_alloc_coherent(&pdev->dev,
 			PAGE_SIZE * 2, &i2c->dma_buf.paddr, GFP_KERNEL);
 	else
@@ -334,7 +330,7 @@ addr:0x0000000011000100		size:0x0080		Õâ¸öµØÖ·Îªi2c0Ê¹ÓÃµÄdmaµØÖ·
 	i2c_set_adapdata(&i2c->adap, i2c);
 	
 	ret = i2c_add_numbered_adapter(&i2c->adap);
-    //×¢²áÒ»¸öi2c adapterÇı¶¯£¬Ëü»áµ÷ÓÃ i2c_register_adapter()
+	//æ³¨å†Œä¸€ä¸ªI2C adapteré©±åŠ¨ï¼Œå®ƒä¼šè°ƒç”¨ i2c_register_adapter()ã€‚
 	if (ret) {
 		dev_err(&pdev->dev, "Failed to add i2c bus to i2c core\n");
 		free_i2c_dma_bufs(i2c);

@@ -24,13 +24,14 @@ x:=xyz
 
 
 二、函数
+
 1、 filter 函数
-用法： $(filter	 PATTERN……   ,		TEXT)
+用法： $(filter PATTERN…… , TEXT)
 作用： 返回 TEXT 中符合 PATTERN 格式的字符串。如果没有符合的，则返回空。
 
 2、 word 函数
-用法：$(word  <n> ,    <text> )
-作用：取字符串 text  中的第 n  个字符， n  从1开始。
+用法：$(word  <n> ,  <text> )
+作用：取字符串 text 中的第 n 个字符， n  从1开始。
 
 3、 sort 函数
 用法：$(sort LIST)
@@ -45,7 +46,7 @@ x:=xyz
 5、 wildcard  函数 ：用来判断存在还是不存在某一路径下的文件
 用法： $(wildcard PATTERN...)
 作用： 在Makefile中，它被展开为已经存在的、使用空格分开的、匹配此模式的所有文件列表。如果不存在任何符合此模式的文件，函数会忽略模式字符并返回空。
-例子： $(wildcard 	$(IMGSENSOR_DRIVER_PATH)/$(MTK_PLATFORM)/camera_project/$(ARCH_MTK_PROJECT)/$(1))	，由于不存在此文件，所以返回空。
+例子： $(wildcard 	$(IMGSENSOR_DRIVER_PATH)/$(MTK_PLATFORM)/camera_project/$(ARCH_MTK_PROJECT)/$(1)) ，由于不存在此文件，所以返回空。
 
 6、 eval  函数
 用法： $(eval text)
@@ -63,12 +64,12 @@ $( foreach drv, gc2355_mipi_raw gc0310_mipi_yuv gc5025s_mipi_raw  ,  $(eval $(ca
 8、 call  函数
 用法： $(  call   <expression>,  <parm1>,  <parm2>,  <parm3>...  )
 作用： 
-当make执行这个函数时， <expression>  参数中的变量，如$(1)，$(2)，$(3)等，会被参 数 <parm1>，<parm2>，<parm3>依次取代。
+当make执行这个函数时， <expression>  参数中的变量，如$(1)，$(2)，$(3)等，会被参数 <parm1>，<parm2>，<parm3>依次取代。
 <expression>  的返回值就是  call  函数的返回值。
 
 9、 subset 函数
 用法： $(subst FROM,	 TO,  TEXT) 
-作用： 把字串  TEXT  中的  FROM  字符替换为 TO  
+作用： 把字串  TEXT  中的  FROM  字符替换为 TO
 例子： $(subst $\",  ,   $(CONFIG_CUSTOM_KERNEL_IMGSENSOR)  )
 
 10、 define 宏定义
@@ -78,6 +79,7 @@ endef
 作用： 定义一个操作集合，它不会自动执行，一般通过 call 调用。
 
 define FILTER_DRV
+
 ifeq ($(wildcard $(IMGSENSOR_DRIVER_PATH)/$(MTK_PLATFORM)/camera_project/$(ARCH_MTK_PROJECT)/$(1)), )
 
 ifeq ($(wildcard $(IMGSENSOR_DRIVER_PATH)/$(MTK_PLATFORM)/$(1)), )
@@ -109,9 +111,9 @@ endif
 endef
 
 
-$(foreach drv,$(subst $\",,$(CONFIG_CUSTOM_KERNEL_IMGSENSOR)),$(eval $(call FILTER_DRV,$(drv))))
+$(foreach drv, $(subst $\",,$(CONFIG_CUSTOM_KERNEL_IMGSENSOR)), $(eval $(call FILTER_DRV,$(drv))) )
 
- ——>  $( foreach drv, gc2355_mipi_raw gc0310_mipi_yuv gc5025s_mipi_raw  ,  $(eval $(call FILTER_DRV,$(drv)))  )
+ ——>  $( foreach drv, gc2355_mipi_raw gc0310_mipi_yuv gc5025s_mipi_raw ,  $(eval $(call FILTER_DRV,$(drv)))  )
 
 含义：
 如果在 imgsensor/src/mt6739/  这个目录没有配置的 imgsensor ，

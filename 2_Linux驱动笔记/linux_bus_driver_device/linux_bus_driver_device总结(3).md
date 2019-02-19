@@ -41,12 +41,12 @@ i2c slave设备driver基于i2c_register_driver来实现：i2c_add_driver(&tpd_i2c_driver
 这个特性常用于i2c总线驱动中。例如在dts中i2c0—i2c3的匹配节点都一样：compatible = "vendor,i2c"，但是只注册了一个i2c总线driver：platform_driver_register(&mt_i2c_driver)，只不过这个driver的probe函数会被调用4次。
 
 
-4、在device_register()函数中，会调用bus_add_device(dev)将这个device跟bus联系起来（将这个device的klist_node链表添加到bus的klist链表尾部）。
+4、在device_register()函数中，会调用bus_add_device(dev)将这个device跟bus联系起来（将这个device的klist_node节点添加到bus的klist链表尾部）。
 
 它还会调用bus_probe_device(dev)，试图匹配driver。但是这个时候driver还没有添加到bus上，所以这个操作没有作用。
 
 
-5、在driver_register()中，也会调用 klist_add_tail 将这个driver跟bus联系起来（将这个driver的klist_node链表添加到bus的klist链表尾部）。
+5、在driver_register()中，也会调用 klist_add_tail 将这个driver跟bus联系起来（将这个driver的klist_node节点添加到bus的klist链表尾部）。
 
 6、在driver_register()函数的really_probe()函数中：
 
