@@ -9,7 +9,6 @@ gcc version 4.8.4
 
 1、在64位的系统上，gcc各种数据类型占的字节：
 
-
 char:     1
 short:    2
 int:      4
@@ -20,24 +19,7 @@ double:   8
 long long:8
 
 
-2、结构体成员的顺序影响结构体的大小
-
-
-struct stu7 {
-    char a;
-	short b;
-	int c;
-};
-sizeof(struct stu7) = 8
-
-struct stu8 {
-	char a;
-	int c;
-	short b;
-};
-sizeof(struct stu8) = 12
-
-
+2、
 GCC中结构体对齐原则：
 在gcc中，未指明对齐字节的情况下，gcc编译器的对齐原则为：
 （1）结构体中每个成员的偏移量，必须是本成员大小的整数倍（0被认为是任何数的整数倍）。
@@ -52,6 +34,19 @@ GCC中结构体对齐原则：
 最终的结构体的大小是：最后一个成员的偏移量+最后一个成员的大小。
 编译器在优化时为了保持字节对齐的要求，会在偏移量之后加上空字节，以满足字节对齐要求。
 
+struct stu7 {
+    	char a;
+	short b;
+	int c;
+};
+sizeof(struct stu7) = 8
+
+struct stu8 {
+	char a;
+	int c;
+	short b;
+};
+sizeof(struct stu8) = 12
 
 struct stu3 {
 	char c1;//偏移量为0
@@ -89,7 +84,7 @@ struct stu7{
         int b;
         char c[5];
 };
-sizeof(strcut stu7)= 。
+sizeof(strcut stu7)=16 。
 
 struct student2 {
 	int num;
