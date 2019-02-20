@@ -3,6 +3,8 @@
 
 ```c
 
+
+
 1. 提交代码到 gerrit
 git status/git status .
 git add xxx.c/git add .
@@ -35,6 +37,7 @@ git push ssh://youname@10.30.49.63:95214/22CZ2597OL_YOUKKK_UIK_V009_WIFI_IIG.git
  --tags 用于推送本地新增的标签。
 
 
+
 2. 其他命令：
 git log . ：可以看到 commit-id
 git checkout -f
@@ -63,6 +66,40 @@ git branch -a
   remotes/origin/release/v2.1.x
   remotes/origin/release/v2.2.x
   remotes/origin/release/v3.0.0
+
+
+
+3. 使用 Github
+(1) 配置用户名, 邮箱
+	git config --global user.name embraceher
+	git config --global user.email 1748494758@qq.com
+
+(2) 查看配置
+	git config --list
+
+(3) 查看远程主机名
+	git remote show origin
+
+(4) 查看本地分支和远程分支
+	git branch -a
+
+(5) 提交代码到 github
+	git push https://github.com/liuyeyaoye/Linux.git master:master --tag
+
+(6) 配置 git, 只使用 git push 命令就可以提交代码
+	git config --global push.default matching		git 将推送和远程同名的所有本地分支。
+	git config --global push.default simple		只推送当前分支到远程关联的同名分支，即 'git push' 推送当前分支。
+	一般使用 simple 模式。
+
+(7) 按照上面的方法，使用 git push 提交代码，每次提交代码都要输入 Username 和 Password, 怎么避免这个情况？
+设置远程主机名：
+	git config --global remote.origin.url https://github.com/liuyeyaoye/Linux.git
+	git remote set-url origin https://github.com/liuyeyaoye/Linux.git
+然后配置：
+	git config --global credential.helper store
+此时查看 ~/.gitconfig, 其中多了一行： helper = store
+
+
 
 ```
 
