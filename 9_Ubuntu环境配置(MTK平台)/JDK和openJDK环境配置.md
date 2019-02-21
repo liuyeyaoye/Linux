@@ -1,3 +1,6 @@
+
+
+
 1、 安装openjdk-8:
 
 ```makefile
@@ -9,7 +12,9 @@ sudo apt-get install openjdk-8-jdk
 sudo chmod -R 755 /usr/lib/jvm/java-8-openjdk-amd64
 
 sudo gedit ~/.bashrc
+
 文件末尾添加如下描述信息：
+
 #for openJDK8:
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 export JRE_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
@@ -25,5 +30,6 @@ sudo update-alternatives --config javac
 确认一下路径：
 printenv JAVA_HOME
 java -version
+
 ```
 

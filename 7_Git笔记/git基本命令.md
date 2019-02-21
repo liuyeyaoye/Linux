@@ -17,7 +17,7 @@ git push <远程主机名> <本地分支名>:<远程分支名>
   remotes/origin/HEAD -> origin/master
   remotes/origin/bctc
   remotes/origin/master
-第一个为本地分支名，后面三个为远程分支名。如果想要提交到远程的 master 分支：
+第一个带 *  号的为本地分支名，后面三个为远程分支名。如果想要提交到远程的 master 分支：
 本地分支名为： master
 远程分支名为： refs/for/master （不需要添加前缀 remotes/origin/ 。加上前缀 refs/for/ ，是因为 gerrit 的规则，避免出现错误： “! [remote rejected] master -> master (prohibited by Gerrit)”）。
 
@@ -30,7 +30,7 @@ git push <远程主机名> <本地分支名>:<远程分支名>
 git remote show ，显示了： origin
 git remote show origin ，显示了：
 获取地址：ssh://youname@10.30.49.63:95214/22CZ2597OL_YOUKKK_UIK_V009_WIFI_IIG.git
-这个就是远程主机名。
+这个获取地址就是远程主机名。
 
 (3) 最终的 git push 命令为：
 git push ssh://youname@10.30.49.63:95214/22CZ2597OL_YOUKKK_UIK_V009_WIFI_IIG.git master:refs/for/master --tags
@@ -40,12 +40,12 @@ git push ssh://youname@10.30.49.63:95214/22CZ2597OL_YOUKKK_UIK_V009_WIFI_IIG.git
 
 2. 其他命令：
 git log . ：可以看到 commit-id
-git checkout -f
-git clean -fd
-git reset --hard commit-id
+git checkout -f：回退所有修改
+git clean -fd：删除新建的文件和文件夹
+git reset --hard commit-id：回退到过去某个版本
 git pull <远程主机名> <远程分支名>:<本地分支名> （跟 git push 类型）
-git checkout -- xxx.c
-git diff xxx.c
+git checkout -- xxx.c：回退某个文件的修改
+git diff xxx.c：比较文件的修改点
 
 切换分支：
 git branch -a

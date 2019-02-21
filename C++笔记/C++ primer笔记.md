@@ -1,8 +1,10 @@
-Primer C++
+C++ Primer
+
 
 
 ```c
 第I部分：C++基础知识
+
 
 
 第1章、变量
@@ -157,12 +159,12 @@ vector<string> svec; //默认初始化， svec 不含任何元素
 (4)
 vector<int> v1(10);		//v1有10个元素，每个的值都是0
 vector<int> v2{10};		//v2有1个元素，值为10
-vector<int> v3(10,1);	//v3有10个元素，每个的值都是1
-vector<int> v4{10, 1};	//v4有2个元素，值为10,1 
+vector<int> v3(10,1);		//v3有10个元素，每个的值都是1
+vector<int> v4{10, 1};		//v4有2个元素，值为10,1 
 
 vector<string> v5{"hi"};		//列表初始化，v5有一个元素
 vector<string> v6("hi");		//错误：不能使用字符串字面值构建 vector 对象
-vector<string> v7{10};			//v7有10个默认初始化的元素
+vector<string> v7{10};		//v7有10个默认初始化的元素
 vector<string> v8{10, "hi"};	//v8有10个值为"hi"的元素
 
 (5)向 vector 对象中添加元素
@@ -178,7 +180,7 @@ for(declaration:expression)
 
 (6)其他方法
 v.empty() 		如果v不含有任何元素，返回真；否则返回假；
-v.size()		返回v中元素的个数
+v.size()			返回v中元素的个数
 v.push_back(t)	向v的尾部添加一个值为t的元素
 
 (7)迭代器 iterator
@@ -187,9 +189,9 @@ auto b = v.begin(), e = v.end();
 如果v为空，则 begin() 和 end() 返回的都是尾元素的下一位置。
 
 *iter 		返回迭代器 iter 所指元素的引用
-iter->mem   等价于 (*iter).mem
+iter->mem   	等价于 (*iter).mem
 ++iter		令 iter 指示容器的下一个元素
---iter  	令 iter 指示容器的上一个元素
+--iter  		令 iter 指示容器的上一个元素
 
 例如：
 string s("something");

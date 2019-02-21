@@ -641,16 +641,6 @@ Y = 16*9*n
 2、为了能够过CTS，要保证最大 KEY_PICTURE_SIZE 和 最大 KEY_PREVIEW_SIZE 的比例一样，都是16:9或者都是4:3.
 
 
-Ubuntu14.04安装 audit2allow ：
-1、 which audit2allow 
-查看使用的是哪个目录的 audit2allow 工具，然后删除它
-2、 sudo apt-get install policycoreutils
-3、 whitch audit2allow
-4、 audit2allow -i avc.txt
-如果提示： unable to open (null):  错误的地址
-将avc.txt中的无效行删除即可。
-
-
 HAL层的lens代码位置：
 hardware/mtkcam/legacy/platform/mt6739/core/featureio/drv/lens
 mtkcam/legacy/platform/mt6739/core/featureio/drv/inc/mcu_dev.h
@@ -920,22 +910,6 @@ ProjectConfig.mk中的CUSTOM_HAL_IMGSENSOR配置，只用在了vendor目录下面的Android.mk
 
 摄像头模组的构成：
 lens镜头、VCM音圈马达、sensor感光芯片、driver IC。
-
-log中有 AEE ：
-
-
-01-01 00:30:04.150   729   729 I AEE/AED : backtrace:
-01-01 00:30:04.150   729   729 I AEE/AED :     #00 pc 0001d308  /system/bin/factory (_Z10psam_entryP9ftm_paramPv+143)
-01-01 00:30:04.150   729   729 I AEE/AED :     #01 pc 000159f1  /system/bin/factory (ftm_entry+252)
-01-01 00:30:04.150   729   729 I AEE/AED :     #02 pc 0000a115  /system/bin/factory (my_item_test_report+272)
-01-01 00:30:04.151   729   729 I AEE/AED :     #03 pc 000081e5  /system/bin/factory (main+1384)
-01-01 00:30:04.151   729   729 I AEE/AED :     #04 pc 00012471  /system/lib/libc.so (__libc_init+44)
-01-01 00:30:04.151   729   729 I AEE/AED :     #05 pc 00009588  /system/bin/factory (_start+96)
-
-
-prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.8/bin/arm-linux-androideabi-addr2line 复制到 /usr/bin 目录，
-adb push /out/target/product/top8321_fgemmc/symbols/system/bin/factory /system/bin/factory
-arm-linux-androideabi-addr2line -e factory 0001d308
 
 
 git 提交代码方法：
