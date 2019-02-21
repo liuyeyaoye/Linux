@@ -29,7 +29,7 @@
 ```c
 int request_irq( unsigned int irq, irq_handler_t handler, unsigned long flags, const char *name, void * dev );
 
-typedef irqreturn_t (*irq_handler_t) (int ,void *)  irq_handler_t;
+typedef irqreturn_t (*irq_handler_t)(int, void *);
 
 irq：中断线的序号                  
 handler：中断处理函数
@@ -301,7 +301,7 @@ tasklet基于软中断实现，但是tasklet只能在调度它的处理器上执
 3、下半部三种机制软中断、tasklet、工作队列的区别在哪里？
 
 （1）软中断：
-运行在中断上下文，不能休眠/阻塞/使用互斥锁mutex，它可以响应中断。软中断执行较快，用于对时间敏感的任务。
+运行在中断上下文，不能休眠/阻塞/使用互斥体mutex，它可以响应中断。软中断执行较快，用于对时间敏感的任务。
 
 2个相同的软中断执行函数可以在2个不同的CPU上同时执行，所以软中断必须严格加锁，所以软中断一般用于处理单处理器数据。
 
@@ -312,7 +312,7 @@ tasklet基于软中断实现，但是tasklet只能在调度它的处理器上执
 使用软中断时只能静态定义：定义一个软中断枚举变量，注册软中断处理函数，然后在中断上半部中触发该软中断。退出中断上半部后，软中断就会被内核通过调用函数 do_softirq() 执行。
 
 （2）tasklet：
-运行在中断上下文，不能休眠/阻塞/使用互斥锁mutex，它可以响应中断。tasklet执行较快，用于对时间敏感的任务。
+运行在中断上下文，不能休眠/阻塞/使用互斥体mutex，它可以响应中断。tasklet执行较快，用于对时间敏感的任务。
 
 tasklet机制是通过软中断来实现的，它使用了2个软中断枚举变量：HI_SOFTIRQ(0)和TASKLET_SOFTIRQ(6)。
 
@@ -321,7 +321,7 @@ tasklet机制是通过软中断来实现的，它使用了2个软中断枚举变
 tasklet的使用方法很简单：首先通过静态DECLARE_TASKLET或者动态tasklet_inti()创建一个tasklet，然后调度执行它即可：tasklet_schedule()。tasklet被调度之后，只要有机会它就会立刻执行。
 
 （3）工作队列：
-运行在进程上下文，可以休眠/阻塞/使用互斥锁mutex，它可以响应中断。
+运行在进程上下文，可以休眠/阻塞/使用互斥体mutex，它可以响应中断。
 
 内核中有一组缺省的工作者线程events/n(n表示CPU的序号)供我们使用，可以使用内核提供的工作者线程，也可以自己创建单个或者n个工作者线程。
 
