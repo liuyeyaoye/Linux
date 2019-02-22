@@ -3,6 +3,8 @@
 
 ```c
 
+
+
 /***********************************************************************************************
 *
 ************************************************************************************************/
@@ -250,6 +252,7 @@ camerahalserver(PID=548):  power on imgsensor, search imgsensor.
 initCamdevice(PID=781)：   power on imgsensor, open  imgsensor.
 
 
+
 /***********************************************************************************************
 *
 ************************************************************************************************/
@@ -319,6 +322,45 @@ TP的ESD check，固件升级，上报TP报点都是通过工作队列来实现。
 
 17) Binder/HwBinder
 binder线程，控制不同线程之间的数据传输；
+
+
+
+/***********************************************************************************************
+*
+************************************************************************************************/
+三. 总结
+
+1. 在 mt6761 平台上, 对于前摄和后摄, 只创建了1个字符设备结点: /dev/kd_camera_hw , 只有1个 file_operation 结构(open/release/unlocked_ioctl)，那么如何区分HAL层打开的是前摄还是后摄？
+
+(1) 看下HAL层操作imgsensor的流程, 在 imgsensor_drv.cpp 中: 
+	fd = open("/dev/kd_camera_hw", O_RDWR);
+	featureCtrl.InvokeCamera = sensorIdx;
+	......
+	ioctl(fd, SENSOR_FEATURE_SET_DRIVER , &featureCtrl);
+	......
+在开机 searchSensor 时, sensorIdx 分别被赋值为 0(main), 1(sub), 2(main2)......，HAL层把 InvokeCamera 这个参数传给 kernel层，用来区分前后摄。
+
+(2) 在 kernel 层的 imgsensor.c 中:
+	psensor->inst.sensor_idx = pFeatureCtrl->InvokeCamera;
+	drv_idx = imgsensor_set_driver(psensor);
+使用 sensorIdx ，可以区分前后摄的 i2c driver/gpio/mclk/regulator，区分前后摄的上下电。
+所以 cdev 和 file_operation结构可以只有一个，通过 sensorIdx 来区分。
+
+2. imgsensor 的 gpio 配置
+(1) 包括 pinctrl 和 regulator 配置:
+pinctrl包括：PWDN, Reset, MCLK.
+regulator包括：VCAMA, VCAMD, VCAMIO, VCAMAF.
+
+3. imgsensor i2c
+(1) imgsensor 前后摄 i2c_driver 的 probe() 函数只做了一件事：保存 i2c_client 为一个全局变量。
+
+
+
+
+
+
+
+
 
 ```
 

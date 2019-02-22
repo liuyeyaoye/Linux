@@ -1,6 +1,7 @@
 
 
 ```c
+
 MTK 平台camera移植步骤
 
 
@@ -10,6 +11,7 @@ MTK 平台camera移植步骤
 
 
 〇、前言
+
 Mediatek平台camera驱动移植涉及到的文件较多，做一个记录，以后点亮新的camera模组按照这个步骤来。
 
 
@@ -24,7 +26,7 @@ Mediatek平台camera驱动移植涉及到的文件较多，做一个记录，以后点亮新的camera模组按
 前摄RST：		GPIO22
 前摄PWDN：		GPIO23
 前后摄共用MCLK：GPIO126
-前后摄SCL2：	GPIO133
+前后摄SCL2：		GPIO133
 前后摄SDA2：	GPIO132
 camera MIPI接口(GPIO154—GPIO163)
 
@@ -41,7 +43,7 @@ GPIO_FLASH_EN(GPIO10)		： 	闪光灯驱动IC使能脚
 二、驱动配置
 
 1、dws
-根据硬件提供的GPIO配置表修改dws文件。
+根据硬件提供的GPIO配置表修改dws文件，配置输入/输出/MIPI.
 
 2、dts
 主要是配置pinctrl
@@ -52,7 +54,7 @@ cam0_mclk_on		cam1_mclk_on
 2.2) flashlight
 flashlight_en_on				GPIO10
 flashlight_strobe_high			GPIO3
-flashlight_f_en_low				GPIO4
+flashlight_f_en_low			GPIO4
 
 
 
