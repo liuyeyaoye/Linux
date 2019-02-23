@@ -93,13 +93,15 @@ git branch -a
 
 (7) 按照上面的方法，使用 git push 提交代码，每次提交代码都要输入 Username 和 Password, 怎么避免这个情况？
 设置远程主机名：
-	git config --global remote.origin.url https://github.com/liuyeyaoye/Linux.git
 	git remote set-url origin https://github.com/liuyeyaoye/Linux.git
 然后配置：
 	git config --global credential.helper store
 此时查看 ~/.gitconfig, 其中多了一行： helper = store
 
 
+(8) git config 删除变量:   git config   --global --unset  name
+git config --global remote.origin.url https://github.com/liuyeyaoye/Linux.git
+git config --global --unset remote.origin.url
 
 ```
 
