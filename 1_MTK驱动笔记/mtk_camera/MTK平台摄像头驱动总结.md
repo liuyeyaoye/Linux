@@ -30,13 +30,13 @@ imgsensor的datasheet为640×480，表示最大分辨率为30W，宽高尺寸为：w:h=4:3。
 (2) PCLK：在并行接口中，sensor的像素时钟，该时钟每变化一次，data更新一次。还有VSYNC和HSYNC，用于MCU逐行或逐帧的捕捉像素，工作方式与LCD相反。
 MIPI CSI接口不需要PCLK，以MIPI的data时钟连续不断的将sensor的数据传给BB端。
 
-3. PWDN引脚：连接BB端与sensor的 power down引脚，控制sensor的sleep，用来控制sensor进入工作模式还是省电模式的一个引脚。
+3. PWDN引脚：连接BB端与sensor的 power down引脚，控制sensor的sleep，用来控制sensor进入工作模式还是待机模式的一个引脚。
 
 4. ldo供电电源，由BB端直接提供：
 VCAM_AF：音圈马达供电电源，一般1.8V/2.8V
 VCAM_IO：数字IO电源，给I2C接口、MIPI接口供电。一般1.8/2.8
 VCAM_A： 模拟电源，给感光区和ADC供电。一般1.8/2.8
-VCAM_D： 数字内核电源，给ISP供电。一般1.2/1.5/1.8/2.8
+VCAM_D： 数字内核电源，给BB端的ISP供电。一般1.2/1.5/1.8/2.8
 
 5. 防抖
 EIS：电子防抖
@@ -182,28 +182,36 @@ flashlight驱动分为2部分：架构相关的驱动和具体的flashlight驱动，通过把具体的flash
 
 
 
-2. 启动服务 camerahalserver，启动 camerahalserver 进程
-(0)在 vendor/xxx/proprietary/hardware/xxxcam/main/hal/service/camerahalserver.rc 
+
+
+2. 启动服务 camerahalserver，启动 camerahalserver 服务
+
+(0) 在 vendor/xxx/proprietary/hardware/xxxcam/main/hal/service/camerahalserver.rc 
 开启 camerahalserver 服务：
 service camerahalserver /vendor/bin/hw/camerahalserver
 
-(1)main 函数：
+(1) main 函数：
 vendor/xxx/proprietary/hardware/xxxcam/main/hal/service/service.cpp
+mian 函数里面配置一下线程池。
 
-(2)进入CameraProvider构造函数：
+
+(2) 进入 CameraProvider 构造函数：
 hardware/interfaces/camera/provider/2.4/default/CameraProvider.cpp
 依次调用：
 CameraProvider::CameraProvider();
-CameraProvider::initialize();
-hw_get_module();
-load();
-android_load_sphal_library(); //在system/core/libvndksupport/linker.c中定义。
-加载库：
-/vendor/lib/hw/android.hardware.camera.provider@2.4-impl-xxx.so
+	CameraProvider::initialize();
+		hw_get_module(CAMERA_HARDWARE_MODULE_ID,  (const hw_module_t **)&rawModule);
+		mModule = new CameraModule(rawModule);
+		err = mModule->init();
+			load();
+				android_load_sphal_library(); //在system/core/libvndksupport/linker.c中定义。
+				加载库： /vendor/lib/hw/android.hardware.camera.provider@2.4-impl-xxx.so
+		mNumberOfLegacyCameras = mModule->getNumberOfCameras();
 
 
 
-3. 启动服务 cameraserver，启动 cameraserver 进程
+
+3. 启动服务 cameraserver，启动 cameraserver 服务
 (1)在system/core/rootdir/init.zygote64.rc中启动：
 onrestart restart cameraserver
 
@@ -355,11 +363,29 @@ regulator包括：VCAMA, VCAMD, VCAMIO, VCAMAF.
 (1) imgsensor 前后摄 i2c_driver 的 probe() 函数只做了一件事：保存 i2c_client 为一个全局变量。
 
 
+4. camera帧率
+(1) 曝光：让sensor感光，让它积累的电信号转换为数字信号。sensor曝光是一行一行的进行的，所以 dummyLine（无效行）会增加曝光时间。
+(2) 快门：控制sensor的曝光时间。代码中的 shutter 表示曝光行数。
+(3) FrameLength：一帧的帧长，可以理解为一帧的行数。FrameLength= shutter + dummyLine 。
+(4) 帧率计算方式：FrameLength = pclk / framerate * 10 / lineLength ， framerate = (10*pclk) / (linelength * FrameLength) 。
+(5) linelength：在不同模式下(预览/拍照/录像)，sensor一行的曝光时间，是固定值。pclk 也是固定值。FrameLength 是可变的。
+(6) 计算帧率：在预览模式下，pclk = 320000000，linelength = 5008，framelength = 2110，算出 framerate =302，30帧。
+(7) kernel 中只能配置最大帧率为 30 帧，它提供了设置帧率的函数（实际上是根据帧率计算出帧长，然后将帧长写入寄存器）。
+具体需要设置多大的帧率是app设置的。在 HAL 的 fbtl 中可以配置几个固定的帧率：5/15/20/24/30.
 
 
-
-
-
+5. camera flicker
+原因： sensor在日光灯作为光源下获取图像数据时会产生 flicker，原因是照在不同sensor像素上的光能量不同造成的。
+电源的频率有50Hz和60Hz的正弦波，对应的能量是一个100Hz和120Hz的波形。
+曝光是一行一行的进行，每个像素的曝光时间都是一样的。同一行的所有点接受的能量都是一样的，不同行接收到的能量是不一样的。
+避免闪烁就是找到一个条件让不同行接收到的能量是一样的，条件是曝光时间必须是光能量周期的整数倍时间。
+如果在代码中使能了 autoflicker ，那么在设置帧率的时候，会根据帧率的值来设置一个符合避免 flicker 的帧率，例如：
+	if ((framerate == 300) && (imgsensor.autoflicker_en == KAL_TRUE))
+		imgsensor.current_fps = 296;
+	else if ((framerate == 150) && (imgsensor.autoflicker_en == KAL_TRUE))
+		imgsensor.current_fps = 146;
+	......
+在 HAL 的 ftbl中可以配置 flicker 模式为：OFF/50Hz/60Hz/auto。
 
 
 ```
