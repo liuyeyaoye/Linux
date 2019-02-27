@@ -501,6 +501,25 @@ binder线程，控制不同线程之间的数据传输；
 
 
 
+/***********************************************************************************************
+*
+************************************************************************************************/
+2.  camera preview flow
+(0) 
+DisplayClient 负责显示图像数据， 它会把图像数据送往 Surface 显示。
+CameraAdapter 负责提供图像数据。它包含了多个 CamNode ，不同的 CamNode 描述不同的 buffer 处理。
+
+(1) control flow ：使用不同的 Node 来描述不同的 buffer 处理
+Pass1Node： 负责和 Sensor Driver、ISP Driver 打交道，进入预览模式的重点工作都由它来完成。
+Pass2Node
+DefaultCtlNode
+CamGraph : 作为各个 Node 通讯的桥梁，CamGraph 代表了整个系统， 所有的 Node 都需要连接到 CamGraph
+
+
+(2) data flow
+pass1 ——> defaultNode ——> pass2 ——> Display
+
+
 
 
 /***********************************************************************************************
