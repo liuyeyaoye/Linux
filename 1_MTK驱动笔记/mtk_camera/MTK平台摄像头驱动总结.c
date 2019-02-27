@@ -186,13 +186,13 @@ flashlight驱动分为2部分：架构相关的驱动和具体的flashlight驱动，通过把具体的flash
 /***********************************************************************************************
 *
 ************************************************************************************************/
-2. 启动服务 camerahalserver，启动 camerahalserver 服务
+2. 启动服务 camerahalserver，启动 camerahalserver 进程
 
 (0) 在 vendor/xxx/proprietary/hardware/xxxcam/main/hal/service/camerahalserver.rc 
-开启 camerahalserver 服务：
+开启 camerahalserver 进程：
 service camerahalserver /vendor/bin/hw/camerahalserver
 
-(1) main 函数：
+(1) 进入 camerahalserver 进程的 main 函数：
 vendor/xxx/proprietary/hardware/xxxcam/main/hal/service/service.cpp
 mian 函数里面配置一下线程池。
 
@@ -203,13 +203,35 @@ hardware/interfaces/camera/provider/2.4/default/CameraProvider.cpp
 CameraProvider::CameraProvider();
 	CameraProvider::initialize();
 		hw_get_module(CAMERA_HARDWARE_MODULE_ID,  (const hw_module_t **)&rawModule);
-		mModule = new CameraModule(rawModule);
-		err = mModule->init();
 			load();
 				android_load_sphal_library(); //在system/core/libvndksupport/linker.c中定义。
-				加载库： /vendor/lib/hw/android.hardware.camera.provider@2.4-impl-xxx.so
+				//加载库： /vendor/lib/hw/android.hardware.camera.provider@2.4-impl-xxx.so		
+		mModule = new CameraModule(rawModule);
+		err = mModule->init();
 		mNumberOfLegacyCameras = mModule->getNumberOfCameras();
 
+
+camera_module_t HAL_MODULE_INFO_SYM __attribute__ ((visibility("default"))) = {
+	.common = {
+		.tag                			= HARDWARE_MODULE_TAG,
+		.module_api_version 	= CAMERA_MODULE_API_VERSION_2_2,
+		.hal_api_version    		= HARDWARE_HAL_API_VERSION,
+		.id                 			= CAMERA_HARDWARE_MODULE_ID,
+		.name               		= "Default Camera HAL",
+		.author             		= "The Android Open Source Project",
+		.methods            		= &gCameraModuleMethods,
+		.dso                		= NULL,
+		.reserved           		= {0},
+	},
+	.get_number_of_cameras 	= get_number_of_cameras,
+	.get_camera_info       		= get_camera_info,
+	.set_callbacks         		= set_callbacks,
+	.get_vendor_tag_ops    		= get_vendor_tag_ops,
+	.open_legacy           		= NULL,
+	.set_torch_mode        		= NULL,
+	.init                  			= NULL,
+	.reserved              			= {0},
+};
 
 
 
@@ -217,18 +239,25 @@ CameraProvider::CameraProvider();
 /***********************************************************************************************
 *
 ************************************************************************************************/
-3.  启动服务 cameraserver，启动 cameraserver 服务
-(1) 在system/core/rootdir/init.zygote64.rc中启动：
-onrestart restart cameraserver
+3.  启动服务 cameraserver，启动 cameraserver 进程
+(1) 在 frameworks/av/camera/cameraserver/cameraserver.rc 中启动：
+service cameraserver /system/bin/cameraserver
 
-(2) 进入 cameraservice 构造函数和 onFirstRef() 函数（framework/av/services/camera/libcameraservice/CameraService.cpp）：
+(2) 进入 cameraserver 进程的 main 函数：
+	sp<IServiceManager> sm = defaultServiceManager();
+	CameraService::instantiate();
+
+
+(3) 进入 CameraService 构造函数和 onFirstRef() 函数（framework/av/services/camera/libcameraservice/CameraService.cpp）：
 
 CameraService::CameraService();
 CameraService::onFirstRef();
 	CameraService::enumerateProviders();
-		CameraProviderManager::initialize();
+		CameraProviderManager::initialize();（framework\av\services\camera\libcameraservice\common）
 
-		CameraDeviceManagerBase::CameraDeviceManagerBase();
+
+		//这个 CameraDeviceManagerBase 是从哪里启动的，代码中没有找到......
+		CameraDeviceManagerBase::CameraDeviceManagerBase();（vendor\mediatek\proprietary\hardware\mtkcam\legacy\main\hal\devicemgr）
 			CameraProviderImpl::initialize();
 		CameraDeviceManagerBase::initialize();
 			CameraDeviceManagerBase::enumerateDevicesLocked();
@@ -317,6 +346,10 @@ seninf 模块：
 	TG前端有一个Seninf Module, Seninf Module的主要功能是处理 Parallel/Mipi/Serial 等 interface 发送的信号。
 	TG module全称为Timing Generator，它主要有两个作用，一是产生sensor 工作所需要的 Master Clock，二是接收 sensor 吐出的信号。
 
+sensor data flow :
+sensor ——> seninf module ——> TG ——> ISP ——> Raw/YUV.
+
+
 这个类的作用：
 IO地址的map：IspAddr, seninfAddr, MIPIRXAddr, gpioAddr
 写一些寄存器的值：seninfReg, ispReg, MIPICSI2Reg
@@ -333,7 +366,9 @@ IO地址的map：IspAddr, seninfAddr, MIPIRXAddr, gpioAddr
 
 
 (3) class ImgSensorDrv
+
 这个类的作用：
+
 searchSensor : featureControl(sensorIdx, SENSOR_FEATURE_SET_DRIVER, (MUINT8 *)&idx, &featureParaLen);
 
 setScenario：设置各个模式下的参数和传递命令，如设置 FPS ， 设置 HDR 模式等。
