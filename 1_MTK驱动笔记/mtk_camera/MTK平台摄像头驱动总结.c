@@ -509,15 +509,36 @@ binder线程，控制不同线程之间的数据传输；
 DisplayClient 负责显示图像数据， 它会把图像数据送往 Surface 显示。
 CameraAdapter 负责提供图像数据。它包含了多个 CamNode ，不同的 CamNode 描述不同的 buffer 处理。
 
-(1) control flow ：使用不同的 Node 来描述不同的 buffer 处理
+(1) 控制流 ：使用不同的 Node 来描述不同的 buffer 处理
 Pass1Node： 负责和 Sensor Driver、ISP Driver 打交道，进入预览模式的重点工作都由它来完成。
 Pass2Node
 DefaultCtlNode
 CamGraph : 作为各个 Node 通讯的桥梁，CamGraph 代表了整个系统， 所有的 Node 都需要连接到 CamGraph
+各个Node之间的通讯就需要用到 connectData 和 connectNotify 函数， connectData 为两个 node 之间 buffer 传输的连接，而 connectNotify 为两个 node 之间消息传输的连接。例如：
+
+connectData( PASS1_RESIZEDRAW, CONTROL_RESIZEDRAW, mpPass1Node, mpDefaultCtrlNode);
+Pass1Node 和 DefaultCtrlNode 就连接在一起，事件是 PASS1_RESIZEDRAW，也就是说当 Pass1Node 调用 handlePostBuffer(PASS1_RESIZEDRAW, buffer) 的时候，DefaultCtrlNode 里面的 onPostBuffer 函数将会接受到 Pass1Node 的 buffer。
+
+connectNotify( PASS1_START_ISP, mpPass1Node, mpDefaultCtrlNode)，事件是 PASS1_START_ISP，当 Pass1Node 调用 handleNotify(PASS1_START_ISP) 的时候，DefaultCtrlNode 里面的 onNotify 函数将会接收到 PASS1_START_ISP 消息。
+
+connectData 和 connectNotify 的不同之处在于，一个可以传输整个buffer，但只能一对一连接，一个只能传输消息，但可以一对多连接。
 
 
 (2) data flow
 pass1 ——> defaultNode ——> pass2 ——> Display
+
+
+(3) DisplayClient
+它会创建一个 DisplayThread，一个 ImgBufQueue。
+ImgBufQueue 里有两个 Buf 队列，mTodoImgBufQue 和 mDoneImgBufQue 。
+prepareOneTodoBuffer 函数做的事情就是从 dequePrvOps 函数 deque 出 StreamImgBuf，并用它生成 ImgBufQueNode，
+把 ImgBufQueNode 的标志位设 eSTATUS_TODO 后调用 ImgBufQueue 的 enqueProcessor 函数把所有的 ImgBufQueNode 都放入到 mTodoImgBufQue 做接收数据的准备。
+
+DisplayClient 准备好 buffer 放到 mTodoImgBufQue 里面。 
+Pass1Node 从底层 deque 一帧数据，然后将数据 post 给 DefaultCtrlNode，DefaultCtrlNode 又将数据 post 给 Pass2Node。 
+Pass2Node 保存好 buffer 之后会触发 threadLoopUpdate，threadLoopUpdate 通过 DefaultBufHandler 从 mTodoImgBufQue 取出buffer，再将 buffer 交给 IHalPostProcPipe 处理，
+当 IHalPostProcPipe 处理完之后会回调 Pass2CbFunc 函数，Pass2CbFunc 通过 DefaultBufHandler 把 buffer 放回 mDoneImgBufQue 里面。 
+最后 DisplayClient 不断从 mDoneImgBufQue 里面取出已经处理好的 buffer 送到 Surface 里面
 
 
 
