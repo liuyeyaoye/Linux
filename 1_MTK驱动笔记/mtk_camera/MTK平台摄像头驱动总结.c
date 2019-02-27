@@ -245,7 +245,7 @@ service cameraserver /system/bin/cameraserver
 
 (2) 进入 cameraserver 进程的 main 函数：
 	sp<IServiceManager> sm = defaultServiceManager();
-	CameraService::instantiate();
+	CameraService::instantiate();//instantiate()在 CameraService 的父类 BinderService 中实现，它的功能是 new CameraService();
 
 
 (3) 进入 CameraService 构造函数和 onFirstRef() 函数（framework/av/services/camera/libcameraservice/CameraService.cpp）：
@@ -256,7 +256,7 @@ CameraService::onFirstRef();
 		CameraProviderManager::initialize();（framework\av\services\camera\libcameraservice\common）
 
 
-		//这个 CameraDeviceManagerBase 是从哪里启动的，代码中没有找到......
+		//这个 CameraDeviceManagerBase 的 initialize 函数是从哪里被调用的，代码中没有找到......
 		CameraDeviceManagerBase::CameraDeviceManagerBase();（vendor\mediatek\proprietary\hardware\mtkcam\legacy\main\hal\devicemgr）
 			CameraProviderImpl::initialize();
 		CameraDeviceManagerBase::initialize();
