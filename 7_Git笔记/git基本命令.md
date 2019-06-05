@@ -110,6 +110,12 @@ git config --global --unset remote.origin.url
 git checkout -b newBranch: 创建一个新的本地分支newBranch，并且切换到newBranch上去。
 git checkout -b newBranch origin/remoteBranch： 创建一个新的本地分支newBranch，并且将它与远程分支remoteBranch联系起来。
 
+git branch newBranch: 创建一个新的本地分支。
+git checkout newBranch: 切换到新的本地分支上去。
+上面2条命令可以合在一起执行： git checkout -b newBranch
+
+
+
 ```
 
 
