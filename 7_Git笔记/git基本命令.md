@@ -103,6 +103,9 @@ git branch -a
 git config --global remote.origin.url https://github.com/liuyeyaoye/Linux.git
 git config --global --unset remote.origin.url
 
+（9）git remote -v
+远程主机名默认为： origin
+
 ```
 
 
