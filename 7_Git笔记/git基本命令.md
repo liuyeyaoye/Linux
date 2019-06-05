@@ -106,6 +106,10 @@ git config --global --unset remote.origin.url
 （9）git remote -v
 远程主机名默认为： origin
 
+（10）git checkout -b
+git checkout -b newBranch: 创建一个新的本地分支newBranch，并且切换到newBranch上去。
+git checkout -b newBranch origin/remoteBranch： 创建一个新的本地分支newBranch，并且将它与远程分支remoteBranch联系起来。
+
 ```
 
 
