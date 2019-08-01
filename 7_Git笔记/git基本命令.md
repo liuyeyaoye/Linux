@@ -114,6 +114,9 @@ git branch newBranch: 创建一个新的本地分支。
 git checkout newBranch: 切换到新的本地分支上去。
 上面2条命令可以合在一起执行： git checkout -b newBranch
 
+(11)repo sync 出错
+因为以前在那个分支打了patch，所以更新代码出错。
+使用命令：git rebase --skip
 
 
 ```
