@@ -118,9 +118,60 @@ git checkout newBranch: 切换到新的本地分支上去。
 因为以前在那个分支打了patch，所以更新代码出错。
 使用命令：git rebase --skip
 
+(12)切换远程分支：
+git checkout -b localBranch origin/remoteBranch
+上面命令在本地新建一个分支，并且与远程分支相关联。
+
+(13)推送代码：
+git push origin HEAD:refs/for/remoteBranch
+git push origin localBranch:refs/for/remoteBranch
+
+(14)同步代码：
+repo sync 
+repo start localBranch --all
+
+(15)修改最近一次提交的代码并且重新提交：
+git commit --amend
+git commit --amend --no-edit
+git push origin localBranch:refs/for/remoteBranch
+
+(16)merge conflict
+可以直接在gerrit网站上点击rebase，如果不能解决冲突，再使用下面方法：
+
+首先更新本地代码到最新：
+git log .
+git reset --hard XXX
+git pull
+
+然后将merge conflict的提交从gerrit网站 cherry-pick下来：
+cherry-pick from gerrit
+
+修改代码解决冲突：
+modify code...
+
+重新提交：
+git status
+git add .
+git cherry-pick --continue
+git push origin HEAD:refs/for/remoteBranch
+
+
+(17)git 打patch和生成patch:
+(1) 打 patch:
+cd folder
+git pull
+git am --abort
+git am -s /home/liuwang1/ubuntu_work/patch/ad9e555.diff
+git status
+//git commit --amend
+git push origin localBranch:refs/for/remoteBranch
+
+(2) 生成 patch
+cd folder
+git log
+git format-patch commitID
+
+
+
 
 ```
-
-
-
-
