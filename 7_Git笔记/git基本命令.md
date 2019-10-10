@@ -157,7 +157,7 @@ git push origin HEAD:refs/for/remoteBranch
 
 
 (17)git 打patch和生成patch:
-(1) 打 patch:
+(17.1) 打 patch:
 cd folder
 git pull
 git am --abort
@@ -166,12 +166,13 @@ git status
 //git commit --amend
 git push origin localBranch:refs/for/remoteBranch
 
-(2) 生成 patch
+(17.2) 生成 patch
 cd folder
 git log
 git format-patch commitID
 
 
-
+(18)git status
+git status 可以查看本地分支与哪个远程分支相关联。
 
 ```
